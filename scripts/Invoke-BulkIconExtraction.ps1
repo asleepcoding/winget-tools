@@ -513,6 +513,36 @@ function Get-ServiceSnapshot {
     return @(Get-CimInstance Win32_Service | Select-Object @{Name='Name';Expression={$_.Name}}, @{Name='State';Expression={$_.State}}, @{Name='StartMode';Expression={$_.StartMode}})
 }
 
+function Get-ArpSnapshot {
+    $roots = @(
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+    )
+    $items = @()
+    foreach ($root in $roots) {
+        if (Test-Path $root) {
+            foreach ($child in Get-ChildItem -Path $root -ErrorAction SilentlyContinue) {
+                try {
+                    $props = Get-ItemProperty -LiteralPath $child.PSPath -ErrorAction SilentlyContinue
+                    $items += [pscustomobject]@{
+                        KeyName         = $child.PSChildName
+                        Hive            = $root
+                        DisplayName     = $props.DisplayName
+                        Publisher       = $props.Publisher
+                        DisplayVersion  = $props.DisplayVersion
+                        InstallDate     = $props.InstallDate
+                        InstallLocation = $props.InstallLocation
+                        UninstallString = $props.UninstallString
+                    }
+                }
+                catch { }
+            }
+        }
+    }
+    return $items
+}
+
 function Get-ShortcutSnapshot {
     $paths = @(
         (Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'),
@@ -529,7 +559,6 @@ function Get-ShortcutSnapshot {
 }
 
 function Get-AutorunSnapshot {
-    # Registry Run keys
     $keys = @(
         'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run',
         'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce',
@@ -552,7 +581,6 @@ function Get-AutorunSnapshot {
             }
         }
     }
-    # Startup folders
     $startupPaths = @(
         (Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup'),
         'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup'
@@ -577,6 +605,7 @@ function Invoke-InstallCleanup {
     param(
         [object[]] $ProcBefore,
         [object[]] $SvcBefore,
+        [object[]] $ArpBefore,
         [object[]] $ShortcutBefore,
         [object[]] $AutorunBefore,
         [object[]] $TaskBefore,
@@ -585,6 +614,7 @@ function Invoke-InstallCleanup {
     $report = [ordered]@{
         Processes     = @()
         Services      = @()
+        ArpEntries    = @()
         Shortcuts     = @()
         Autoruns      = @()
         ScheduledTasks = @()
@@ -610,6 +640,24 @@ function Invoke-InstallCleanup {
             $report.Services += [pscustomobject]@{ Name = $s.Name; State = $s.State; StartMode = $s.StartMode }
             try { Set-Service -Name $s.Name -StartupType Disabled -ErrorAction SilentlyContinue } catch { & sc.exe config $s.Name start= disabled | Out-Null }
             try { Stop-Service -Name $s.Name -Force -ErrorAction SilentlyContinue } catch { }
+        }
+    }
+
+    # -- ARP entries --
+    $arpAfter = @(Get-ArpSnapshot)
+    $beforeArpKeys = @($ArpBefore | ForEach-Object { "$($_.Hive)\$($_.KeyName)" })
+    foreach ($a in $arpAfter) {
+        $key = "$($a.Hive)\$($a.KeyName)"
+        if ($key -notin $beforeArpKeys) {
+            $report.ArpEntries += [pscustomobject]@{
+                KeyName         = $a.KeyName
+                Hive            = $a.Hive
+                DisplayName     = $a.DisplayName
+                Publisher       = $a.Publisher
+                DisplayVersion  = $a.DisplayVersion
+                InstallDate     = $a.InstallDate
+                InstallLocation = $a.InstallLocation
+            }
         }
     }
 
@@ -734,10 +782,11 @@ function New-WinGetOutcome {
 
 function Get-InstallSidecarSnapshots {
     return [pscustomobject]@{
-        Processes   = @(Get-ProcessSnapShot)
-        Services    = @(Get-ServiceSnapshot)
-        Shortcuts   = @(Get-ShortcutSnapshot)
-        Autoruns    = @(Get-AutorunSnapshot)
+        Processes     = @(Get-ProcessSnapshot)
+        Services      = @(Get-ServiceSnapshot)
+        ArpEntries    = @(Get-ArpSnapshot)
+        Shortcuts     = @(Get-ShortcutSnapshot)
+        Autoruns      = @(Get-AutorunSnapshot)
         ScheduledTasks = @(Get-ScheduledTaskSnapshot)
     }
 }
@@ -771,6 +820,7 @@ function Install-WinGetPackage {
 
     $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
                                      -SvcBefore $snapBefore.Services `
+                                     -ArpBefore $snapBefore.ArpEntries `
                                      -ShortcutBefore $snapBefore.Shortcuts `
                                      -AutorunBefore $snapBefore.Autoruns `
                                      -TaskBefore $snapBefore.ScheduledTasks
@@ -790,6 +840,7 @@ function Install-WinGetPackage {
 
         $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
                                          -SvcBefore $snapBefore.Services `
+                                         -ArpBefore $snapBefore.ArpEntries `
                                          -ShortcutBefore $snapBefore.Shortcuts `
                                          -AutorunBefore $snapBefore.Autoruns `
                                          -TaskBefore $snapBefore.ScheduledTasks
@@ -817,6 +868,7 @@ function Install-WinGetPackage {
 
     $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
                                      -SvcBefore $snapBefore.Services `
+                                     -ArpBefore $snapBefore.ArpEntries `
                                      -ShortcutBefore $snapBefore.Shortcuts `
                                      -AutorunBefore $snapBefore.Autoruns `
                                      -TaskBefore $snapBefore.ScheduledTasks
