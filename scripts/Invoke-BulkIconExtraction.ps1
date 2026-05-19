@@ -503,68 +503,148 @@ $script:installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { '
 $script:wingetCommunitySourceName = $script:wingetCommunitySourceName
 
 # ----------------------
-# Process / Service helpers to clean up installs
+# Install-sidecar snapshot & cleanup helpers
 # ----------------------
 function Get-ProcessSnapshot {
-    # Return array of @{ ProcessId; ParentProcessId; Name }
     return @(Get-CimInstance Win32_Process | Select-Object @{Name='ProcessId';Expression={$_.ProcessId}}, @{Name='ParentProcessId';Expression={$_.ParentProcessId}}, @{Name='Name';Expression={$_.Name}})
-}
-
-function Kill-ProcessTree {
-    param(
-        [Parameter(Mandatory)][object[]] $Before,
-        [Parameter(Mandatory)][object[]] $After
-    )
-
-    $beforeIds = @($Before | ForEach-Object { $_.ProcessId })
-    $afterMap = @{}
-    foreach ($p in $After) { $afterMap[$p.ProcessId] = $p }
-    $newIds = @($afterMap.Keys) | Where-Object { $_ -and ($_ -notin $beforeIds) }
-
-    if ($newIds.Count -eq 0) { return }
-
-    foreach ($pid in $newIds) {
-        try {
-            # Attempt graceful stop, then force
-            Stop-Process -Id $pid -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            Start-Sleep -Milliseconds 200
-            if (Get-Process -Id $pid -ErrorAction SilentlyContinue) {
-                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-            }
-        }
-        catch {
-            # best-effort
-        }
-    }
 }
 
 function Get-ServiceSnapshot {
     return @(Get-CimInstance Win32_Service | Select-Object @{Name='Name';Expression={$_.Name}}, @{Name='State';Expression={$_.State}}, @{Name='StartMode';Expression={$_.StartMode}})
 }
 
-function Stop-AndDisable-NewServices {
-    param(
-        [Parameter(Mandatory)][object[]] $Before,
-        [Parameter(Mandatory)][object[]] $After
+function Get-ShortcutSnapshot {
+    $paths = @(
+        (Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'),
+        (Join-Path $env:PUBLIC 'Desktop'),
+        (Join-Path $env:USERPROFILE 'Desktop')
     )
-
-    $beforeNames = @($Before | ForEach-Object { $_.Name })
-    $afterNames = @($After | ForEach-Object { $_.Name })
-    $newServices = $afterNames | Where-Object { $_ -and ($_ -notin $beforeNames) }
-
-    if ($newServices.Count -eq 0) { return }
-
-    foreach ($svc in $newServices) {
-        try {
-            Write-Host ("  Detected new service: {0} — disabling and stopping." -f $svc) -ForegroundColor Yellow
-            # Try Set-Service first (PowerShell 7+). Fallback to sc.exe if it fails.
-            try { Set-Service -Name $svc -StartupType Disabled -ErrorAction Stop } catch { & sc.exe config $svc start= disabled | Out-Null }
-            try { Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue } catch {}
-        }
-        catch {
-            # best-effort
+    $items = @()
+    foreach ($dir in $paths) {
+        if (Test-Path $dir) {
+            $items += Get-ChildItem -Path $dir -Filter '*.lnk' -Recurse -ErrorAction SilentlyContinue | Select-Object @{Name='Path';Expression={$_.FullName}}, @{Name='Name';Expression={$_.Name}}
         }
     }
+    return $items
+}
+
+function Get-AutorunSnapshot {
+    # Registry Run keys
+    $keys = @(
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run',
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce',
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run',
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce'
+    )
+    $items = @()
+    foreach ($regPath in $keys) {
+        if (Test-Path $regPath) {
+            $props = Get-ItemProperty -Path $regPath -ErrorAction SilentlyContinue | Get-Member -MemberType NoteProperty | ForEach-Object { $_.Name }
+            foreach ($prop in $props) {
+                if ($prop -in @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider')) { continue }
+                try {
+                    $val = (Get-ItemProperty -Path $regPath -Name $prop -ErrorAction SilentlyContinue).$prop
+                    $items += [pscustomobject]@{ Path = $regPath; Name = $prop; Value = "$val" }
+                }
+                catch { }
+            }
+        }
+    }
+    # Startup folders
+    $startupPaths = @(
+        (Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup'),
+        'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup'
+    )
+    foreach ($dir in $startupPaths) {
+        if (Test-Path $dir) {
+            $items += Get-ChildItem -Path $dir -ErrorAction SilentlyContinue | Select-Object @{Name='Path';Expression={$_.FullName}}, @{Name='Name';Expression={$_.Name}}
+        }
+    }
+    return $items
+}
+
+function Get-ScheduledTaskSnapshot {
+    try {
+        return @(Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskPath -eq '\' } |
+            Select-Object @{Name='Name';Expression={$_.TaskName}}, @{Name='Path';Expression={$_.TaskPath}}, @{Name='State';Expression={"$($_.State)"}})
+    }
+    catch { return @() }
+}
+
+function Invoke-InstallCleanup {
+    param(
+        [object[]] $ProcBefore,
+        [object[]] $SvcBefore,
+        [object[]] $ShortcutBefore,
+        [object[]] $AutorunBefore,
+        [object[]] $TaskBefore,
+        [switch] $NoKillProcesses
+    )
+    $report = [ordered]@{
+        Processes     = @()
+        Services      = @()
+        Shortcuts     = @()
+        Autoruns      = @()
+        ScheduledTasks = @()
+    }
+
+    # -- Processes --
+    $procAfter = @(Get-ProcessSnapshot)
+    $beforeIds = @($ProcBefore | ForEach-Object { $_.ProcessId })
+    foreach ($p in $procAfter) {
+        if ($p.ProcessId -notin $beforeIds) {
+            $report.Processes += [pscustomobject]@{ ProcessId = $p.ProcessId; Name = $p.Name }
+            if (-not $NoKillProcesses) {
+                try { Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue } catch { }
+            }
+        }
+    }
+
+    # -- Services --
+    $svcAfter = @(Get-ServiceSnapshot)
+    $beforeSvcNames = @($SvcBefore | ForEach-Object { $_.Name })
+    foreach ($s in $svcAfter) {
+        if ($s.Name -notin $beforeSvcNames) {
+            $report.Services += [pscustomobject]@{ Name = $s.Name; State = $s.State; StartMode = $s.StartMode }
+            try { Set-Service -Name $s.Name -StartupType Disabled -ErrorAction SilentlyContinue } catch { & sc.exe config $s.Name start= disabled | Out-Null }
+            try { Stop-Service -Name $s.Name -Force -ErrorAction SilentlyContinue } catch { }
+        }
+    }
+
+    # -- Shortcuts --
+    $shortcutAfter = @(Get-ShortcutSnapshot)
+    $beforeShortcutPaths = @($ShortcutBefore | ForEach-Object { $_.Path })
+    foreach ($sc in $shortcutAfter) {
+        if ($sc.Path -notin $beforeShortcutPaths) {
+            $report.Shortcuts += [pscustomobject]@{ Path = $sc.Path; Name = $sc.Name }
+            try { Remove-Item -LiteralPath $sc.Path -Force -ErrorAction SilentlyContinue } catch { }
+        }
+    }
+
+    # -- Autoruns --
+    $autorunAfter = @(Get-AutorunSnapshot)
+    $beforeAutorunKeys = @($AutorunBefore | ForEach-Object { "$($_.Path)\$($_.Name)" })
+    foreach ($a in $autorunAfter) {
+        $key = "$($a.Path)\$($a.Name)"
+        if ($key -notin $beforeAutorunKeys) {
+            $report.Autoruns += [pscustomobject]@{ Path = $a.Path; Name = $a.Name; Value = $a.Value }
+            try { Remove-ItemProperty -Path $a.Path -Name $a.Name -Force -ErrorAction SilentlyContinue } catch { }
+        }
+    }
+
+    # -- Scheduled tasks --
+    $taskAfter = @(Get-ScheduledTaskSnapshot)
+    $beforeTaskNames = @($TaskBefore | ForEach-Object { $_.Name })
+    foreach ($t in $taskAfter) {
+        if ($t.Name -notin $beforeTaskNames) {
+            $report.ScheduledTasks += [pscustomobject]@{ Name = $t.Name; Path = $t.Path; State = $t.State }
+            try { Disable-ScheduledTask -TaskName $t.Name -ErrorAction SilentlyContinue | Out-Null } catch { }
+        }
+    }
+
+    return [pscustomobject]$report
 }
 
 function Get-WinGetExitHex {
@@ -652,6 +732,16 @@ function New-WinGetOutcome {
     }
 }
 
+function Get-InstallSidecarSnapshots {
+    return [pscustomobject]@{
+        Processes   = @(Get-ProcessSnapShot)
+        Services    = @(Get-ServiceSnapshot)
+        Shortcuts   = @(Get-ShortcutSnapshot)
+        Autoruns    = @(Get-AutorunSnapshot)
+        ScheduledTasks = @(Get-ScheduledTaskSnapshot)
+    }
+}
+
 function Install-WinGetPackage {
     param(
         [Parameter(Mandatory)] [string] $PackageId,
@@ -668,9 +758,8 @@ function Install-WinGetPackage {
     $attempts = New-Object System.Collections.Generic.List[object]
     $machineArgs = $commonArgs + @('--scope', 'machine')
 
-    # Snapshot processes and services before install (for cleanup)
-    try { $procBefore = Get-ProcessSnapshot } catch { $procBefore = @() }
-    try { $svcBefore  = Get-ServiceSnapshot } catch { $svcBefore = @() }
+    # Snapshot all sidecars before install
+    $snapBefore = Get-InstallSidecarSnapshots
 
     # Try the installer's default scope first. User-scoped EXE bootstrappers
     # often fail or hang when forced to machine scope, while extraction already
@@ -680,14 +769,17 @@ function Install-WinGetPackage {
                               -Tag 'install-default'
     $attempts.Add((New-WinGetAttemptRecord -Result $r)) | Out-Null
 
-    # Capture post-install snapshots and do cleanup before returning
-    try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
-    try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
-    try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
-    try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
+    $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
+                                     -SvcBefore $snapBefore.Services `
+                                     -ShortcutBefore $snapBefore.Shortcuts `
+                                     -AutorunBefore $snapBefore.Autoruns `
+                                     -TaskBefore $snapBefore.ScheduledTasks
 
-    if ($r.TimedOut) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
-    if ($r.ExitCode -eq 0) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
+    if ($r.TimedOut -or $r.ExitCode -eq 0) {
+        $o = New-WinGetOutcome -Result $r -Attempts $attempts.ToArray()
+        $null = $o | Add-Member -NotePropertyName 'CleanupReport' -NotePropertyValue $cleanup -PassThru
+        return $o
+    }
 
     if (Test-WinGetSourceError -ExitCode $r.ExitCode) {
         # Retry once in the default scope when source errors occur
@@ -696,13 +788,17 @@ function Install-WinGetPackage {
                                   -Tag 'install-default-retry'
         $attempts.Add((New-WinGetAttemptRecord -Result $r)) | Out-Null
 
-        try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
-        try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
-        try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
-        try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
+        $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
+                                         -SvcBefore $snapBefore.Services `
+                                         -ShortcutBefore $snapBefore.Shortcuts `
+                                         -AutorunBefore $snapBefore.Autoruns `
+                                         -TaskBefore $snapBefore.ScheduledTasks
 
-        if ($r.TimedOut) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
-        if ($r.ExitCode -eq 0) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
+        if ($r.TimedOut -or $r.ExitCode -eq 0) {
+            $o = New-WinGetOutcome -Result $r -Attempts $attempts.ToArray()
+            $null = $o | Add-Member -NotePropertyName 'CleanupReport' -NotePropertyValue $cleanup -PassThru
+            return $o
+        }
     }
 
     # Fall back to machine scope in case the default path chose a user install
@@ -719,13 +815,15 @@ function Install-WinGetPackage {
         $attempts.Add((New-WinGetAttemptRecord -Result $r2)) | Out-Null
     }
 
-    # Final cleanup pass
-    try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
-    try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
-    try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
-    try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
+    $cleanup = Invoke-InstallCleanup -ProcBefore $snapBefore.Processes `
+                                     -SvcBefore $snapBefore.Services `
+                                     -ShortcutBefore $snapBefore.Shortcuts `
+                                     -AutorunBefore $snapBefore.Autoruns `
+                                     -TaskBefore $snapBefore.ScheduledTasks
 
-    return New-WinGetOutcome -Result $r2 -Attempts $attempts.ToArray()
+    $o = New-WinGetOutcome -Result $r2 -Attempts $attempts.ToArray()
+    $null = $o | Add-Member -NotePropertyName 'CleanupReport' -NotePropertyValue $cleanup -PassThru
+    return $o
 }
 
 function Uninstall-WinGetPackage {
@@ -969,6 +1067,7 @@ foreach ($pkg in $todo) {
         UninstallSeconds   = 0
         DurationSeconds    = 0
         StartedAt          = $started.ToUniversalTime().ToString('o')
+        CleanupReport      = $null
     }
 
     $resolvedPackageId = Resolve-WinGetPackageId -PackageId $pkg
@@ -1015,6 +1114,9 @@ foreach ($pkg in $todo) {
             $record.InstallAttemptTag = $install.Tag
             $record.InstallAttempts = @($install.Attempts)
             $record.FailureCategory = if ($install.FailureCategory) { $install.FailureCategory } else { '' }
+            if ($install.CleanupReport) {
+                $record.CleanupReport = $install.CleanupReport
+            }
             if ($install.StdErr) {
                 $record.InstallStdErr = ($install.StdErr.Substring(0, [Math]::Min(512, $install.StdErr.Length)))
             }
@@ -1188,6 +1290,7 @@ foreach ($pkg in $todo) {
             icons               = $iconRecords
             extractError        = if ($record.ExtractError) { $record.ExtractError } else { $null }
             installStdErr       = if ($record.InstallStdErr) { $record.InstallStdErr } else { $null }
+            cleanupReport       = if ($record.CleanupReport) { $record.CleanupReport } else { $null }
         }
 
         # Preserve lastUpdatedUtc from previous entry when this run didn't
