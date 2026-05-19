@@ -1260,7 +1260,7 @@ function Normalize-MatchText {
     param([string] $Value)
 
     if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
-    return (($Value -replace '[^A-Za-z0-9]+', '').ToLowerInvariant())
+    return (($Value -replace '[^\p{L}\p{N}]+', '').ToLowerInvariant())
 }
 
 function Get-SearchTokens {
@@ -1764,14 +1764,14 @@ if (($hints.InstallerType -ieq 'msix') -or (-not [string]::IsNullOrWhiteSpace($h
     Write-Verbose ("Installed MSIX icon extraction did not produce an icon for '{0}', falling back to ARP/hint-based logic." -f $PackageId)
 }
 
-$searchTokens = Get-SearchTokens -Hints $hints
+$searchTokens = [string[]]@((Get-SearchTokens -Hints $hints) | Where-Object { $_ })
 if (($hints.ProductCodes.Count -eq 0) -and (($hints.Names.Count -eq 0) -or ($hints.Publishers.Count -eq 0))) {
     throw "Manifest for '$PackageId' provides neither ProductCode nor a (PackageName, Publisher) pair to correlate against ARP, and no installed MSIX package icon path was resolved."
 }
 Write-Verbose ("Hints: ProductCodes=[{0}] Names=[{1}] Publishers=[{2}] Version={3}" -f `
     ($hints.ProductCodes -join ', '), ($hints.Names -join ', '), ($hints.Publishers -join ', '), $hints.Version)
 
-$arpMatches = Find-ArpEntries -Hints $hints -Scope $Scope
+$arpMatches = @(Find-ArpEntries -Hints $hints -Scope $Scope)
 $hintOnlyCandidates = @()
 if (-not $arpMatches -or $arpMatches.Count -eq 0) {
     $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
