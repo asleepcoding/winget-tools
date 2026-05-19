@@ -570,12 +570,16 @@ function Get-AutorunSnapshot {
     $items = @()
     foreach ($regPath in $keys) {
         if (Test-Path $regPath) {
-            $props = Get-ItemProperty -Path $regPath -ErrorAction SilentlyContinue | Get-Member -MemberType NoteProperty | ForEach-Object { $_.Name }
+            $item = Get-ItemProperty -Path $regPath -ErrorAction SilentlyContinue
+            if (-not $item) { continue }
+            $props = $item.PSObject.Properties | Where-Object { $_.MemberType -eq 'NoteProperty' } | ForEach-Object { $_.Name }
             foreach ($prop in $props) {
                 if ($prop -in @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider')) { continue }
                 try {
-                    $val = (Get-ItemProperty -Path $regPath -Name $prop -ErrorAction SilentlyContinue).$prop
-                    $items += [pscustomobject]@{ Path = $regPath; Name = $prop; Value = "$val" }
+                    $val = $item.$prop
+                    if ($null -ne $val) {
+                        $items += [pscustomobject]@{ Path = $regPath; Name = $prop; Value = "$val" }
+                    }
                 }
                 catch { }
             }
