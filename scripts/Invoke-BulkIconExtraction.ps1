@@ -259,7 +259,7 @@ function Get-ExtractedIconFiles {
         $files.Add($file) | Out-Null
     }
 
-    return ,$files.ToArray()
+    return $files.ToArray()
 }
 
 function Resolve-WinGetPackageId {
@@ -414,7 +414,7 @@ function Invoke-WinGetCommand {
     $proc = $null
     $timedOut = $false
     try {
-        $proc = Start-Process -FilePath 'winget' -ArgumentList $Arguments `
+        $proc = Start-Process -FilePath $script:installerExe -ArgumentList $Arguments `
             -RedirectStandardOutput $stdoutFile `
             -RedirectStandardError  $stderrFile `
             -WindowStyle Hidden -PassThru
@@ -493,6 +493,79 @@ $script:wingetUnattendedArgs = @(
 $script:wingetInstallUnattendedArgs = @(
     '--accept-package-agreements'
 ) + $script:wingetUnattendedArgs
+
+# Installer executable selection: prefer pinget, fall back to winget.
+$script:installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { 'pinget' } `
+                     elseif (Get-Command winget -ErrorAction SilentlyContinue) { 'winget' } `
+                     else { throw 'Neither pinget nor winget found in PATH.' }
+
+# Backwards-compat alias used in args construction
+$script:wingetCommunitySourceName = $script:wingetCommunitySourceName
+
+# ----------------------
+# Process / Service helpers to clean up installs
+# ----------------------
+function Get-ProcessSnapshot {
+    # Return array of @{ ProcessId; ParentProcessId; Name }
+    return @(Get-CimInstance Win32_Process | Select-Object @{Name='ProcessId';Expression={$_.ProcessId}}, @{Name='ParentProcessId';Expression={$_.ParentProcessId}}, @{Name='Name';Expression={$_.Name}})
+}
+
+function Kill-ProcessTree {
+    param(
+        [Parameter(Mandatory)][object[]] $Before,
+        [Parameter(Mandatory)][object[]] $After
+    )
+
+    $beforeIds = @($Before | ForEach-Object { $_.ProcessId })
+    $afterMap = @{}
+    foreach ($p in $After) { $afterMap[$p.ProcessId] = $p }
+    $newIds = @($afterMap.Keys) | Where-Object { $_ -and ($_ -notin $beforeIds) }
+
+    if ($newIds.Count -eq 0) { return }
+
+    foreach ($pid in $newIds) {
+        try {
+            # Attempt graceful stop, then force
+            Stop-Process -Id $pid -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            Start-Sleep -Milliseconds 200
+            if (Get-Process -Id $pid -ErrorAction SilentlyContinue) {
+                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+            }
+        }
+        catch {
+            # best-effort
+        }
+    }
+}
+
+function Get-ServiceSnapshot {
+    return @(Get-CimInstance Win32_Service | Select-Object @{Name='Name';Expression={$_.Name}}, @{Name='State';Expression={$_.State}}, @{Name='StartMode';Expression={$_.StartMode}})
+}
+
+function Stop-AndDisable-NewServices {
+    param(
+        [Parameter(Mandatory)][object[]] $Before,
+        [Parameter(Mandatory)][object[]] $After
+    )
+
+    $beforeNames = @($Before | ForEach-Object { $_.Name })
+    $afterNames = @($After | ForEach-Object { $_.Name })
+    $newServices = $afterNames | Where-Object { $_ -and ($_ -notin $beforeNames) }
+
+    if ($newServices.Count -eq 0) { return }
+
+    foreach ($svc in $newServices) {
+        try {
+            Write-Host ("  Detected new service: {0} — disabling and stopping." -f $svc) -ForegroundColor Yellow
+            # Try Set-Service first (PowerShell 7+). Fallback to sc.exe if it fails.
+            try { Set-Service -Name $svc -StartupType Disabled -ErrorAction Stop } catch { & sc.exe config $svc start= disabled | Out-Null }
+            try { Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue } catch {}
+        }
+        catch {
+            # best-effort
+        }
+    }
+}
 
 function Get-WinGetExitHex {
     param([Parameter(Mandatory)] [int] $ExitCode)
@@ -595,6 +668,10 @@ function Install-WinGetPackage {
     $attempts = New-Object System.Collections.Generic.List[object]
     $machineArgs = $commonArgs + @('--scope', 'machine')
 
+    # Snapshot processes and services before install (for cleanup)
+    try { $procBefore = Get-ProcessSnapshot } catch { $procBefore = @() }
+    try { $svcBefore  = Get-ServiceSnapshot } catch { $svcBefore = @() }
+
     # Try the installer's default scope first. User-scoped EXE bootstrappers
     # often fail or hang when forced to machine scope, while extraction already
     # checks both HKCU and HKLM for ARP icons.
@@ -603,14 +680,26 @@ function Install-WinGetPackage {
                               -Tag 'install-default'
     $attempts.Add((New-WinGetAttemptRecord -Result $r)) | Out-Null
 
+    # Capture post-install snapshots and do cleanup before returning
+    try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
+    try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
+    try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
+    try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
+
     if ($r.TimedOut) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
     if ($r.ExitCode -eq 0) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
 
     if (Test-WinGetSourceError -ExitCode $r.ExitCode) {
+        # Retry once in the default scope when source errors occur
         $r = Invoke-WinGetCommand -Arguments $commonArgs `
                                   -TimeoutSeconds $TimeoutSeconds `
                                   -Tag 'install-default-retry'
         $attempts.Add((New-WinGetAttemptRecord -Result $r)) | Out-Null
+
+        try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
+        try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
+        try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
+        try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
 
         if ($r.TimedOut) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
         if ($r.ExitCode -eq 0) { return New-WinGetOutcome -Result $r -Attempts $attempts.ToArray() }
@@ -629,6 +718,12 @@ function Install-WinGetPackage {
                                    -Tag 'install-machine-retry'
         $attempts.Add((New-WinGetAttemptRecord -Result $r2)) | Out-Null
     }
+
+    # Final cleanup pass
+    try { $procAfter = Get-ProcessSnapshot } catch { $procAfter = @() }
+    try { $svcAfter  = Get-ServiceSnapshot } catch { $svcAfter = @() }
+    try { Kill-ProcessTree -Before $procBefore -After $procAfter } catch {}
+    try { Stop-AndDisable-NewServices -Before $svcBefore -After $svcAfter } catch {}
 
     return New-WinGetOutcome -Result $r2 -Attempts $attempts.ToArray()
 }
@@ -815,7 +910,7 @@ function Write-PackageState {
 
 $wingetVersion = ''
 try {
-    $wingetVersion = (& winget --version 2>$null) -replace '[\r\n]', ''
+    $wingetVersion = (& $script:installerExe --version 2>$null) -replace '[\r\n]', ''
 } catch { }
 
 $todo        = New-Object System.Collections.Generic.List[string]

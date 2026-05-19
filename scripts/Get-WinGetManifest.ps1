@@ -125,6 +125,11 @@ if ($Mode -eq 'Online' -and $WarmCache) {
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# Prefer pinget when available; fall back to winget for compatibility.
+$installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { 'pinget' } `
+                elseif (Get-Command winget -ErrorAction SilentlyContinue) { 'winget' } `
+                else { throw 'Neither pinget nor winget found in PATH.' }
+
 $DefaultCommunitySourceName = 'winget'
 $DefaultWingetIndexUrl = 'https://github.com/svrooij/winget-pkgs-index/raw/main/index.v2.json'
 $DefaultWingetIndexCachePath = Join-Path (Split-Path -Path $PSScriptRoot -Parent) 'out/cache/winget-pkgs-index/index.v2.json'
@@ -184,7 +189,7 @@ $packageCachePath = [System.IO.Path]::Combine($packageIdPathParts)
 if ($SourceName) {
     Write-Step "Discovering source info for '$SourceName'"
 
-    $sourceListOutput = & winget source list --name $SourceName 2>&1
+    $sourceListOutput = & $installerExe source list --name $SourceName 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Error "winget source list failed (exit $LASTEXITCODE). Is '$SourceName' a registered source? Run: winget source list"
         exit 1
@@ -410,7 +415,7 @@ if ($WarmCache) {
         Write-Warn 'Source is Microsoft.Rest — winget show will not write a FileCache file.'
         Write-Warn '-PathOnly will not work after warming a REST source.'
     }
-    & winget @wingetArgs | Out-Null
+    & $installerExe @wingetArgs | Out-Null
     if ($LASTEXITCODE -ne 0) {
         Write-Warn "winget show exited with code $LASTEXITCODE — cache may not have been populated."
     } else {

@@ -121,9 +121,14 @@ jobs:
         shell: pwsh
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
-          $v = winget --version 2>$null
-          if ($LASTEXITCODE -ne 0) { throw 'winget CLI not available.' }
-          Write-Host "winget version: $v"
+          if (Get-Command pinget -ErrorAction SilentlyContinue) {
+            $v = pinget --version 2>$null
+          } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
+            $v = winget --version 2>$null
+          } else {
+            throw 'No installer CLI (pinget or winget) available.'
+          }
+          Write-Host "installer version: $v"
 
       - name: Validate requested packages
         id: packages
@@ -230,7 +235,13 @@ jobs:
                   [Parameter(Mandatory)] [string] $Tag
               )
 
-              $lines = @(& winget @Arguments 2>&1)
+              if (-not $installerExe) {
+                  if (Get-Command pinget -ErrorAction SilentlyContinue) { $installerExe = 'pinget' } 
+                  elseif (Get-Command winget -ErrorAction SilentlyContinue) { $installerExe = 'winget' } 
+                  else { throw 'No installer CLI (pinget or winget) available.' }
+              }
+
+              $lines = @(& $installerExe @Arguments 2>&1)
               $exitCode = $LASTEXITCODE
               $output = ($lines | ForEach-Object { $_.ToString() }) -join "`n"
               $key = [string]$exitCode
