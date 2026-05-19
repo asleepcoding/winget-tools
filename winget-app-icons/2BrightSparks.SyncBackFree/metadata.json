@@ -5,8 +5,8 @@
   "status": "HasIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T19:48:32.9275317Z",
-  "lastCheckedUtc": "2026-05-19T23:57:29.0265703Z",
-  "lastUpdatedUtc": "2026-05-19T23:57:29.0265703Z",
+  "lastCheckedUtc": "2026-05-19T23:58:49.8324095Z",
+  "lastUpdatedUtc": "2026-05-19T23:58:49.8324095Z",
   "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
@@ -14,7 +14,7 @@
   "alreadyInstalled": true,
   "installedByThisRun": false,
   "installSeconds": 0,
-  "extractSeconds": 1,
+  "extractSeconds": 0,
   "uninstallSeconds": 0,
   "durationSeconds": 1,
   "installExitCode": null,
@@ -41,7 +41,7 @@
     "sha256": "10c693dd7bcb54df482ef13475de0f23b2bdf23451544fe40482a27e0427dcaf"
   },
   "run": {
-    "startedAtUtc": "2026-05-19T23:57:29.0265703Z",
+    "startedAtUtc": "2026-05-19T23:58:49.8324095Z",
     "runId": null,
     "runAttempt": null,
     "repository": null
