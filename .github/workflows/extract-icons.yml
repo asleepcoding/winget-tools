@@ -1,0 +1,606 @@
+name: Extract WinGet icons
+run-name: >-
+  ${{ inputs.request_label != '' && inputs.request_label || format('Extract WinGet icons #{0}', github.run_number) }}
+
+on:
+  workflow_call:
+    inputs:
+      package_ids_csv:
+        description: 'Comma-separated winget package IDs to process (maximum 25).'
+        required: true
+        type: string
+      uninstall_after:
+        description: 'Uninstall each package after icon extraction'
+        required: false
+        default: true
+        type: boolean
+      per_package_timeout:
+        description: 'Per-package install timeout (seconds)'
+        required: false
+        default: '600'
+        type: string
+      auto_commit_results:
+        description: 'Commit the refreshed winget-app-icons package folders back to the repo'
+        required: false
+        default: false
+        type: boolean
+      campaign_id:
+        description: 'Optional campaign identifier used by automation'
+        required: false
+        default: ''
+        type: string
+      batch_index:
+        description: 'Optional 1-based batch index used by automation'
+        required: false
+        default: ''
+        type: string
+      batch_total:
+        description: 'Optional total batch count used by automation'
+        required: false
+        default: ''
+        type: string
+      dispatch_token:
+        description: 'Optional unique dispatch token used to correlate this run'
+        required: false
+        default: ''
+        type: string
+      request_label:
+        description: 'Optional run label shown in Actions UI'
+        required: false
+        default: ''
+        type: string
+  workflow_dispatch:
+    inputs:
+      package_ids_csv:
+        description: 'Comma-separated winget package IDs to process (maximum 25).'
+        required: true
+        type: string
+      uninstall_after:
+        description: 'Uninstall each package after icon extraction'
+        required: false
+        default: true
+        type: boolean
+      per_package_timeout:
+        description: 'Per-package install timeout (seconds)'
+        required: false
+        default: '600'
+        type: string
+      auto_commit_results:
+        description: 'Commit the refreshed winget-app-icons package folders back to the repo'
+        required: false
+        default: false
+        type: boolean
+      campaign_id:
+        description: 'Optional campaign identifier used by automation'
+        required: false
+        default: ''
+        type: string
+      batch_index:
+        description: 'Optional 1-based batch index used by automation'
+        required: false
+        default: ''
+        type: string
+      batch_total:
+        description: 'Optional total batch count used by automation'
+        required: false
+        default: ''
+        type: string
+      dispatch_token:
+        description: 'Optional unique dispatch token used to correlate this run'
+        required: false
+        default: ''
+        type: string
+      request_label:
+        description: 'Optional run label shown in Actions UI'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: extract-icons-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    name: Extract requested package batch
+    runs-on: windows-latest
+    timeout-minutes: 360
+    outputs:
+      artifact_name: ${{ steps.packages.outputs.artifact_name }}
+      artifact_key: ${{ steps.packages.outputs.artifact_key }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Verify winget
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $v = winget --version 2>$null
+          if ($LASTEXITCODE -ne 0) { throw 'winget CLI not available.' }
+          Write-Host "winget version: $v"
+
+      - name: Validate requested packages
+        id: packages
+        shell: pwsh
+        env:
+          PACKAGE_IDS_CSV: ${{ inputs.package_ids_csv }}
+          ARTIFACT_KEY: ${{ inputs.dispatch_token != '' && inputs.dispatch_token || github.run_id }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [void](New-Item -ItemType Directory -Path out -Force)
+
+          $packages = @($env:PACKAGE_IDS_CSV -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+          if (-not $packages -or $packages.Count -eq 0) {
+              throw 'Provide at least one winget package ID.'
+          }
+
+          $duplicates = @($packages | Group-Object -CaseSensitive | Where-Object Count -gt 1 | Select-Object -ExpandProperty Name)
+          if ($duplicates.Count -gt 0) {
+              throw ("Duplicate package IDs are not allowed: {0}" -f ($duplicates -join ', '))
+          }
+
+          if ($packages.Count -gt 25) {
+              throw ("At most 25 package IDs are allowed per run. Received {0}." -f $packages.Count)
+          }
+
+          $invalidChars = [System.IO.Path]::GetInvalidFileNameChars()
+          $invalidPackages = @(
+              $packages | Where-Object {
+                  $_.IndexOfAny($invalidChars) -ge 0 -or
+                  $_.EndsWith(' ') -or
+                  $_.EndsWith('.')
+              }
+          )
+          if ($invalidPackages.Count -gt 0) {
+              throw ("These package IDs are not safe as folder names: {0}" -f ($invalidPackages -join ', '))
+          }
+
+          $payload = [ordered]@{
+              generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
+              count          = $packages.Count
+              campaignId     = '${{ inputs.campaign_id }}'
+              batchIndex     = '${{ inputs.batch_index }}'
+              batchTotal     = '${{ inputs.batch_total }}'
+              dispatchToken  = '${{ inputs.dispatch_token }}'
+              requestLabel   = '${{ inputs.request_label }}'
+              packages       = $packages
+          }
+
+          $payload | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath out/requested-packages.json -Encoding UTF8
+          $packages | Set-Content -LiteralPath out/requested-packages.txt -Encoding UTF8
+
+          "count=$($packages.Count)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "artifact_key=$env:ARTIFACT_KEY" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "artifact_name=winget-icon-batch-$env:ARTIFACT_KEY" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+          "## Requested packages" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- Count: **$($packages.Count)**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- Auto-commit: **${{ inputs.auto_commit_results }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- Uninstall after extraction: **${{ inputs.uninstall_after }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            if ('${{ inputs.campaign_id }}') {
+              "- Campaign ID: **${{ inputs.campaign_id }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            }
+            if ('${{ inputs.batch_index }}') {
+              $batchLine = if ('${{ inputs.batch_total }}') { "${{ inputs.batch_index }}/${{ inputs.batch_total }}" } else { '${{ inputs.batch_index }}' }
+              "- Batch: **$batchLine**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            }
+            if ('${{ inputs.dispatch_token }}') {
+              "- Dispatch token: **${{ inputs.dispatch_token }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            }
+            if ('${{ inputs.request_label }}') {
+              "- Request label: **${{ inputs.request_label }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            }
+          "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          foreach ($pkg in $packages) {
+              "- ``$pkg``" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          }
+
+      - name: Prepare and validate winget sources
+        id: source_bootstrap
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $requested = Get-Content -LiteralPath out/requested-packages.json -Raw -Encoding UTF8 | ConvertFrom-Json
+
+          $sourceErrorCodes = @{
+              '-1978335221' = 'APPINSTALLER_CLI_ERROR_SOURCES_INVALID'
+              '-1978335217' = 'APPINSTALLER_CLI_ERROR_SOURCE_DATA_MISSING'
+              '-1978335211' = 'APPINSTALLER_CLI_ERROR_NO_SOURCES_DEFINED'
+              '-1978335174' = 'APPINSTALLER_CLI_ERROR_RESTAPI_INTERNAL_ERROR'
+              '-1978335169' = 'APPINSTALLER_CLI_ERROR_SOURCE_DATA_INTEGRITY_FAILURE'
+              '-1978335163' = 'APPINSTALLER_CLI_ERROR_SOURCE_OPEN_FAILED'
+              '-1978335157' = 'APPINSTALLER_CLI_ERROR_FAILED_TO_OPEN_ALL_SOURCES'
+          }
+
+          function Get-ExitHex {
+              param([Parameter(Mandatory)] [int] $ExitCode)
+              return ('0x{0:X8}' -f ([uint32]([int64]$ExitCode -band 0xffffffffL)))
+          }
+
+          function Invoke-WingetCapture {
+              param(
+                  [Parameter(Mandatory)] [string[]] $Arguments,
+                  [Parameter(Mandatory)] [string] $Tag
+              )
+
+              $lines = @(& winget @Arguments 2>&1)
+              $exitCode = $LASTEXITCODE
+              $output = ($lines | ForEach-Object { $_.ToString() }) -join "`n"
+              $key = [string]$exitCode
+
+              return [pscustomobject]@{
+                  tag           = $Tag
+                  arguments     = @($Arguments)
+                  exitCode      = $exitCode
+                  exitHex       = Get-ExitHex -ExitCode $exitCode
+                  errorName     = if ($sourceErrorCodes.ContainsKey($key)) { $sourceErrorCodes[$key] } else { $null }
+                  isSourceError = $sourceErrorCodes.ContainsKey($key)
+                  output        = if ($output) { $output.Trim() } else { '' }
+              }
+          }
+
+          function Invoke-SourceRepair {
+              param([Parameter(Mandatory)] [string] $Reason)
+
+              $script:repairCount++
+              $script:events.Add([pscustomobject]@{
+                  type         = 'repair'
+                  reason       = $Reason
+                  repairCount  = $script:repairCount
+                  startedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
+              }) | Out-Null
+
+              foreach ($operation in @(
+                  @{ Tag = 'source-list-before-repair'; Arguments = @('source', 'list') },
+                  @{ Tag = 'source-reset'; Arguments = @('source', 'reset', '--force') },
+                  @{ Tag = 'source-update-after-reset'; Arguments = @('source', 'update', '--disable-interactivity') },
+                  @{ Tag = 'source-list-after-repair'; Arguments = @('source', 'list') }
+              )) {
+                  $script:events.Add((Invoke-WingetCapture -Arguments $operation.Arguments -Tag $operation.Tag)) | Out-Null
+              }
+          }
+
+          $events = New-Object System.Collections.Generic.List[object]
+          $repairCount = 0
+          $maxAttempts = 3
+              $canaryPackage = '7zip.7zip'
+          $sourceReady = $false
+          $lastSourceFailure = $null
+
+          $events.Add([pscustomobject]@{
+              type              = 'bootstrap'
+              requestedCount    = @($requested.packages).Count
+              validationPackage = $canaryPackage
+              startedAtUtc      = (Get-Date).ToUniversalTime().ToString('o')
+          }) | Out-Null
+
+          for ($attempt = 1; $attempt -le $maxAttempts -and -not $sourceReady; $attempt++) {
+              $events.Add([pscustomobject]@{
+                  type         = 'attempt'
+                  attempt      = $attempt
+                  startedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
+              }) | Out-Null
+
+              $update = Invoke-WingetCapture -Arguments @('source', 'update', '--disable-interactivity') -Tag 'source-update'
+              $events.Add($update) | Out-Null
+
+              $validate = Invoke-WingetCapture -Arguments @('show', '--id', $canaryPackage, '--exact', '--source', 'winget', '--accept-source-agreements', '--disable-interactivity') -Tag 'source-validate-canary'
+              $events.Add($validate) | Out-Null
+
+              if ($validate.exitCode -eq 0) {
+                  $sourceReady = $true
+                  break
+              }
+
+              if ($validate.isSourceError) {
+                  $lastSourceFailure = $validate
+              }
+              elseif ($update.isSourceError) {
+                  $lastSourceFailure = $update
+              }
+              else {
+                    $eventItems = @($events.ToArray())
+                    $report = [pscustomobject]@{
+                      generatedAtUtc    = (Get-Date).ToUniversalTime().ToString('o')
+                      ready             = $false
+                      repairCount       = $repairCount
+                      maxAttempts       = $maxAttempts
+                      validationPackage = $canaryPackage
+                      failureMode       = 'UnexpectedValidationFailure'
+                      lastFailure       = [pscustomobject]@{
+                          exitCode  = $validate.exitCode
+                          exitHex   = $validate.exitHex
+                          errorName = $validate.errorName
+                          output    = $validate.output
+                      }
+                      events            = $eventItems
+                  }
+                  $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath out/source-bootstrap.json -Encoding UTF8
+                  "ready=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+                  "repair_count=$repairCount" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+                  "canary_package=$canaryPackage" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+                  throw ("WinGet source canary validation failed unexpectedly with exit {0}. Output: {1}" -f $validate.exitHex, $validate.output)
+              }
+
+              if ($attempt -lt $maxAttempts) {
+                  Invoke-SourceRepair -Reason ("Attempt {0} failed with {1} ({2})" -f $attempt, $lastSourceFailure.exitHex, $lastSourceFailure.errorName)
+              }
+          }
+
+            $eventItems = @($events.ToArray())
+            $lastFailureReport = $null
+            if ($lastSourceFailure) {
+              $lastFailureReport = [pscustomobject]@{
+                exitCode  = $lastSourceFailure.exitCode
+                exitHex   = $lastSourceFailure.exitHex
+                errorName = $lastSourceFailure.errorName
+                output    = $lastSourceFailure.output
+              }
+            }
+
+            $report = [pscustomobject]@{
+              generatedAtUtc    = (Get-Date).ToUniversalTime().ToString('o')
+              ready             = $sourceReady
+              repairCount       = $repairCount
+              maxAttempts       = $maxAttempts
+              validationPackage = $canaryPackage
+              lastFailure       = $lastFailureReport
+              events            = $eventItems
+          }
+
+          $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath out/source-bootstrap.json -Encoding UTF8
+          "ready=$($sourceReady.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "repair_count=$repairCount" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "canary_package=$canaryPackage" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+          if (-not $sourceReady) {
+              $lastExitHex = if ($lastSourceFailure) { $lastSourceFailure.exitHex } else { 'unknown' }
+              $lastErrorName = if ($lastSourceFailure) { $lastSourceFailure.errorName } else { 'unknown' }
+              throw ("WinGet source validation failed after {0} attempt(s). Last failure: {1} ({2})" -f $maxAttempts, $lastExitHex, $lastErrorName)
+          }
+
+      - name: Install Yayaml PowerShell module
+        shell: pwsh
+        run: |
+          if (-not (Get-Module -ListAvailable -Name Yayaml)) {
+              Install-Module -Name Yayaml -Scope CurrentUser -Force -AcceptLicense -Repository PSGallery
+          }
+          Import-Module Yayaml -ErrorAction Stop
+
+      - name: Run extraction batch
+        id: extract_batch
+        shell: pwsh
+        continue-on-error: true
+        env:
+          PKG_TIMEOUT: ${{ inputs.per_package_timeout || '600' }}
+          UNINSTALL_AFTER: ${{ inputs.uninstall_after && 'true' || 'false' }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $requested = Get-Content -LiteralPath out/requested-packages.json -Raw -Encoding UTF8 | ConvertFrom-Json
+
+          $params = @{
+              Packages                 = @($requested.packages)
+              OutDir                   = 'out/icons'
+              SummaryPath              = 'out/summary.json'
+              PackageStateRoot         = 'winget-app-icons'
+              PerPackageTimeoutSeconds = [int]$env:PKG_TIMEOUT
+              Force                    = $true
+          }
+          if ($env:UNINSTALL_AFTER -eq 'true') {
+              $params['UninstallAfter'] = $true
+          }
+
+            $scriptFailed = $false
+            try {
+              & ./scripts/Invoke-BulkIconExtraction.ps1 @params
+            }
+            catch {
+              $scriptFailed = $true
+              Write-Warning "Extraction script terminated early, but batch outputs will still be published: $($_.Exception.Message)"
+            }
+
+            "script_failed=$($scriptFailed.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Render source bootstrap summary
+        if: always()
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath 'out/source-bootstrap.json')) {
+              return
+          }
+
+          $bootstrap = Get-Content -LiteralPath 'out/source-bootstrap.json' -Raw -Encoding UTF8 | ConvertFrom-Json
+          $lines = New-Object System.Collections.Generic.List[string]
+          $lines.Add('## WinGet source bootstrap')
+          $lines.Add('')
+          $lines.Add(("- Ready: **{0}**" -f $bootstrap.ready))
+          $lines.Add(("- Repair attempts: **{0}**" -f $bootstrap.repairCount))
+          $lines.Add(("- Validation package: **{0}**" -f $bootstrap.validationPackage))
+          if ($bootstrap.lastFailure) {
+              $lines.Add(("- Last source failure: **{0}** ({1})" -f $bootstrap.lastFailure.exitHex, $bootstrap.lastFailure.errorName))
+          }
+          $lines.Add('')
+          $lines -join "`n" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - name: Render extraction summary
+        if: always()
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath 'out/summary.json')) {
+              "## Extraction summary" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+              "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+              "No summary was produced." | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+              return
+          }
+
+          $payload = Get-Content -LiteralPath 'out/summary.json' -Raw -Encoding UTF8 | ConvertFrom-Json
+          $lines = New-Object System.Collections.Generic.List[string]
+          $lines.Add('## Extraction summary')
+          $lines.Add('')
+            if ('${{ steps.extract_batch.outputs.script_failed }}' -eq 'true') {
+              $lines.Add('- Script exit: **non-fatal failure**')
+            }
+          $lines.Add(("- Processed: **{0}**" -f $payload.Processed))
+          $lines.Add(("- Total result rows: **{0}**" -f $payload.Total))
+          $lines.Add('')
+          $lines.Add('| Status | Count |')
+          $lines.Add('| --- | ---: |')
+          foreach ($prop in $payload.StatusCounts.PSObject.Properties) {
+              $lines.Add(("| {0} | {1} |" -f $prop.Name, $prop.Value))
+          }
+            if ($payload.FailureCategoryCounts -and $payload.FailureCategoryCounts.PSObject.Properties.Count -gt 0) {
+              $lines.Add('')
+              $lines.Add('| Failure Category | Count |')
+              $lines.Add('| --- | ---: |')
+              foreach ($prop in $payload.FailureCategoryCounts.PSObject.Properties) {
+                $lines.Add(("| {0} | {1} |" -f $prop.Name, $prop.Value))
+              }
+            }
+          $lines -join "`n" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - name: Build merge-ready batch archive
+        if: always()
+        shell: pwsh
+        env:
+          BATCH_ZIP_NAME: winget-app-icons-batch-${{ steps.packages.outputs.artifact_key }}.zip
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $requested = Get-Content -LiteralPath out/requested-packages.json -Raw -Encoding UTF8 | ConvertFrom-Json
+
+          $repoRoot = (Resolve-Path '.').Path
+          $stageRoot = Join-Path $repoRoot 'out/artifact-root'
+          $batchRoot = Join-Path $stageRoot 'winget-app-icons'
+          $zipDir = Join-Path $repoRoot 'out/artifacts'
+
+          if (Test-Path -LiteralPath $stageRoot) {
+              Remove-Item -LiteralPath $stageRoot -Recurse -Force
+          }
+          [void](New-Item -ItemType Directory -Path $batchRoot -Force)
+          [void](New-Item -ItemType Directory -Path $zipDir -Force)
+
+          foreach ($pkg in $requested.packages) {
+              $src = Join-Path (Join-Path $repoRoot 'winget-app-icons') $pkg
+              if (-not (Test-Path -LiteralPath $src -PathType Container)) {
+                  Write-Warning "Processed package folder '$pkg' was not created."
+                  continue
+              }
+
+              $dest = Join-Path $batchRoot $pkg
+              [void](New-Item -ItemType Directory -Path $dest -Force)
+              Get-ChildItem -LiteralPath $src -Force -ErrorAction Stop |
+                ForEach-Object {
+                  Copy-Item -LiteralPath $_.FullName -Destination $dest -Recurse -Force -ErrorAction Stop
+                }
+          }
+
+          $zipPath = Join-Path $zipDir $env:BATCH_ZIP_NAME
+          if (Test-Path -LiteralPath $zipPath) {
+              Remove-Item -LiteralPath $zipPath -Force
+          }
+          Compress-Archive -Path $batchRoot -DestinationPath $zipPath -CompressionLevel Optimal
+
+      - name: Upload batch artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.packages.outputs.artifact_name }}
+          path: |
+            out/artifacts/winget-app-icons-batch-${{ steps.packages.outputs.artifact_key }}.zip
+            out/summary.json
+            out/requested-packages.json
+            out/source-bootstrap.json
+          if-no-files-found: error
+          retention-days: 14
+
+  commit-results:
+    name: Commit extracted package folders
+    needs: extract
+    if: ${{ !cancelled() && needs.extract.result == 'success' && inputs.auto_commit_results }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download batch artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.extract.outputs.artifact_name }}
+          path: import
+
+      - name: Import batch and commit
+        shell: pwsh
+        env:
+          ARTIFACT_KEY: ${{ needs.extract.outputs.artifact_key }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $importRoot = (Resolve-Path 'import').Path
+          $zipMatch = Get-ChildItem -LiteralPath $importRoot -Recurse -File -Filter "winget-app-icons-batch-$env:ARTIFACT_KEY.zip" -ErrorAction Stop | Select-Object -First 1
+          $requestMatch = Get-ChildItem -LiteralPath $importRoot -Recurse -File -Filter 'requested-packages.json' -ErrorAction Stop | Select-Object -First 1
+          if (-not $zipMatch) {
+            throw "Batch archive not found under $importRoot"
+          }
+          if (-not $requestMatch) {
+            throw "Requested package manifest not found under $importRoot"
+          }
+
+          $zipPath = $zipMatch.FullName
+          $requestPath = $requestMatch.FullName
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --ff-only origin master
+
+          Expand-Archive -LiteralPath $zipPath -DestinationPath (Resolve-Path '.').Path -Force
+
+          $requested = Get-Content -LiteralPath $requestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+
+          foreach ($pkg in $requested.packages) {
+              $pkgPath = Join-Path 'winget-app-icons' $pkg
+              if (Test-Path -LiteralPath $pkgPath) {
+                  git add -- "$pkgPath"
+              }
+          }
+
+          $cached = git diff --cached --name-only
+          if (-not $cached) {
+              Write-Host 'No package folder changes to commit.'
+              return
+          }
+
+            $details = New-Object System.Collections.Generic.List[string]
+            if ($requested.campaignId) {
+              $details.Add("campaign $($requested.campaignId)") | Out-Null
+            }
+            if ($requested.batchIndex) {
+              if ($requested.batchTotal) {
+                $details.Add("batch $($requested.batchIndex)/$($requested.batchTotal)") | Out-Null
+              }
+              else {
+                $details.Add("batch $($requested.batchIndex)") | Out-Null
+              }
+            }
+            $details.Add("$($requested.packages.Count) packages") | Out-Null
+            $details.Add("run $env:GITHUB_RUN_ID") | Out-Null
+
+            git commit -m "chore: refresh winget icon batch ($($details -join ', ')) [skip ci]"
+          git push
+
+      - name: Render commit summary
+        if: always()
+        shell: pwsh
+        run: |
+          "## Auto-commit" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- Enabled for this run." | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            if ('${{ inputs.request_label }}') {
+              "- Request label: **${{ inputs.request_label }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            }
