@@ -78,6 +78,7 @@ When iterating quickly, prefer batches of 10 packages.
 - `scripts/Get-WinGetIcon.ps1`: installed-package icon extraction logic
 - `scripts/Get-WinGetManifest.ps1`: manifest lookup helper
 - `scripts/Get-WingetAppIconCatalog.ps1`: local metadata and icon-state query helper for `winget-app-icons/`
+- `WingetTools/`: PowerShell module containing shared utilities and refactored functions (thin wrappers remain in `scripts/`)
 - `.agents/skills/winget-extract-icons/`: prompt-driven extraction skill for
    GitHub Actions-based icon population
 - `.agents/skills/winget-icon-catalog/`: prompt-driven skill for querying icon coverage, statuses, and failure reasons from the local registry

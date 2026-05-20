@@ -485,6 +485,11 @@ $script:wingetPackageIdAliases = [ordered]@{
     'WagnardSoft.DisplayDriverUninstaller' = 'Wagnardsoft.DisplayDriverUninstaller'
 }
 
+# Installer executable selection: prefer pinget, fall back to winget.
+$script:installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { 'pinget' } `
+                     elseif (Get-Command winget -ErrorAction SilentlyContinue) { 'winget' } `
+                     else { throw 'Neither pinget nor winget found in PATH.' }
+
 # Pinget doesn't know the winget-specific agreement/interactivity flags.
 # Only pass them when the actual executable is winget.
 $script:wingetUnattendedArgs = if ($script:installerExe -eq 'winget') {
@@ -498,11 +503,6 @@ $script:wingetInstallUnattendedArgs = if ($script:installerExe -eq 'winget') {
 } else {
     @()
 }
-
-# Installer executable selection: prefer pinget, fall back to winget.
-$script:installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { 'pinget' } `
-                     elseif (Get-Command winget -ErrorAction SilentlyContinue) { 'winget' } `
-                     else { throw 'Neither pinget nor winget found in PATH.' }
 
 # Backwards-compat alias used in args construction
 $script:wingetCommunitySourceName = $script:wingetCommunitySourceName

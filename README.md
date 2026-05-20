@@ -80,6 +80,35 @@ When `auto_commit_results` is enabled, the workflow imports that same batch arti
 
 ## Scripts
 
+The repository is organized around a `WingetTools/` PowerShell module that contains
+shared utilities and refactored functions. The files under `scripts/` are thin
+entry-point wrappers that import the module and delegate to exported functions.
+
+### Module structure
+
+- `WingetTools/WingetTools.psd1` — module manifest
+- `WingetTools/WingetTools.psm1` — root module loader
+- `WingetTools/Public/` — exported functions (one per script)
+- `WingetTools/Private/` — internal helpers (`Get-RepoRoot`, `Resolve-RepoPath`, `Get-WingetExecutable`, etc.)
+
+### Small scripts (refactored into module)
+
+| Wrapper | Module Function | Purpose |
+|---|---|---|
+| `scripts/Expand-Ico.ps1` | `Expand-Ico` | Splits `.ico` files into individual frames |
+| `scripts/Get-WingetAppIconCatalog.ps1` | `Get-WingetAppIconCatalog` | Queries `winget-app-icons/` metadata |
+| `scripts/Install-EssentialWingetPackages.ps1` | `Install-EssentialWingetPackages` | Installs packages from `winget-essentials-shortlist.txt` |
+| `scripts/Install-WingetPackages.ps1` | `Install-WingetPackages` | Bulk installs with host protection (PATH/service/process cleanup) |
+
+### Large scripts (kept standalone, planned for future migration)
+
+| Script | Purpose |
+|---|---|
+| `scripts/Get-WinGetIcon.ps1` | Extracts icons from installed WinGet packages (~1,500 lines) |
+| `scripts/Get-WinGetManifest.ps1` | Fetches raw WinGet manifest YAML (~520 lines) |
+| `scripts/Invoke-BulkIconExtraction.ps1` | Bulk install/extract/uninstall orchestrator (~1,000 lines) |
+| `scripts/Invoke-IconExtractionCampaign.ps1` | GitHub Actions campaign runner (~620 lines) |
+
 ### `scripts/Invoke-IconExtractionCampaign.ps1`
 
 Builds and optionally executes a repeatable GitHub Actions extraction campaign
