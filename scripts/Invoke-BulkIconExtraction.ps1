@@ -485,14 +485,19 @@ $script:wingetPackageIdAliases = [ordered]@{
     'WagnardSoft.DisplayDriverUninstaller' = 'Wagnardsoft.DisplayDriverUninstaller'
 }
 
-$script:wingetUnattendedArgs = @(
-    '--accept-source-agreements',
-    '--disable-interactivity'
-)
+# Pinget doesn't know the winget-specific agreement/interactivity flags.
+# Only pass them when the actual executable is winget.
+$script:wingetUnattendedArgs = if ($script:installerExe -eq 'winget') {
+    @('--accept-source-agreements', '--disable-interactivity')
+} else {
+    @()
+}
 
-$script:wingetInstallUnattendedArgs = @(
-    '--accept-package-agreements'
-) + $script:wingetUnattendedArgs
+$script:wingetInstallUnattendedArgs = if ($script:installerExe -eq 'winget') {
+    @('--accept-package-agreements') + $script:wingetUnattendedArgs
+} else {
+    @()
+}
 
 # Installer executable selection: prefer pinget, fall back to winget.
 $script:installerExe = if (Get-Command pinget -ErrorAction SilentlyContinue) { 'pinget' } `
