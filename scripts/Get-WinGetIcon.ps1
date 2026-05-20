@@ -1631,6 +1631,20 @@ function Resolve-IconBytesFromCandidates {
             }
             { $_ -in '.exe', '.dll' } {
                 $bytes = [WinGetIconTools.Native]::ExtractIcoFromBinary($iconPath, $iconIndex)
+                if (-not $bytes -or $bytes.Length -eq 0) {
+                    # Native walker didn't find RT_GROUP_ICON; fallback to ExtractAssociatedIcon
+                    try {
+                        Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue
+                        $ico = [System.Drawing.Icon]::ExtractAssociatedIcon($iconPath)
+                        if ($ico) {
+                            $ms = New-Object System.IO.MemoryStream
+                            $ico.Save($ms)
+                            $bytes = $ms.ToArray()
+                            $ms.Dispose()
+                        }
+                    }
+                    catch { }
+                }
             }
         }
 
