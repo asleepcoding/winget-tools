@@ -15,6 +15,7 @@ Export-ModuleMember -Function @(
     'Expand-Ico'
     'Get-WingetAppIconCatalog'
     'Install-EssentialWingetPackages'
+    'Install-TrackedWingetPackage'
     'Install-WingetPackages'
     'Uninstall-NonEssentialWingetPackages'
 )
