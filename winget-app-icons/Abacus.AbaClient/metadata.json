@@ -5,18 +5,18 @@
   "status": "NoIcon",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-24T21:00:54.058216Z",
-  "lastCheckedUtc": "2026-04-26T00:38:18.7619824Z",
+  "lastCheckedUtc": "2026-05-20T00:18:48.2808644Z",
   "lastUpdatedUtc": null,
-  "wingetVersion": "v1.11.510",
+  "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": true,
-  "installSeconds": 67,
+  "installSeconds": 5,
   "extractSeconds": 32,
   "uninstallSeconds": 8,
-  "durationSeconds": 108,
+  "durationSeconds": 45,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -38,7 +38,7 @@
   "canonicalIconBytes": null,
   "canonicalIconSha256": null,
   "extractError": null,
-  "installStdErr": null,
+  "installStdErr": "warning: Package is already installed and up to date; rerun with --force to reinstall.",
   "installAttempts": {
     "tag": "install-default",
     "exitCode": 0,
@@ -49,9 +49,9 @@
   },
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-26T00:38:18.7619824Z",
-    "runId": "24943755544",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-20T00:18:48.2808644Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }

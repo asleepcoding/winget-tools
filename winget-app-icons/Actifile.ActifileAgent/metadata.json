@@ -2,34 +2,29 @@
   "schema": 1,
   "packageId": "Actifile.ActifileAgent",
   "resolvedPackageId": null,
-  "status": "InstallFailed",
+  "status": "InstallTimeout",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-24T21:40:06.7950557Z",
-  "lastCheckedUtc": "2026-04-26T01:10:17.4939967Z",
+  "lastCheckedUtc": "2026-05-20T00:23:24.1374887Z",
   "lastUpdatedUtc": null,
-  "wingetVersion": "v1.11.510",
+  "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": false,
-  "installSeconds": 9,
-  "extractSeconds": 32,
+  "installSeconds": 603,
+  "extractSeconds": 0,
   "uninstallSeconds": 0,
-  "durationSeconds": 41,
-  "installExitCode": -1978335215,
-  "installTimedOut": false,
+  "durationSeconds": 604,
+  "installExitCode": -1,
+  "installTimedOut": true,
   "uninstallExitCode": null,
   "uninstallTimedOut": false,
-  "failureCategory": "Install",
-  "installAttemptTag": "install-machine",
-  "extractAttemptCount": 4,
-  "extractAttemptScopes": [
-    "Both",
-    "User",
-    "Machine",
-    "Both"
-  ],
+  "failureCategory": "Timeout",
+  "installAttemptTag": "install-default",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
   "extractFailureCategory": "ArpNotFound",
   "iconCount": 0,
   "iconBytes": 0,
@@ -39,29 +34,19 @@
   "canonicalIconSha256": null,
   "extractError": null,
   "installStdErr": null,
-  "installAttempts": [
-    {
-      "tag": "install-default",
-      "exitCode": -1978335215,
-      "exitHex": "0x8A150011",
-      "timedOut": false,
-      "errorName": null,
-      "failureCategory": "Install"
-    },
-    {
-      "tag": "install-machine",
-      "exitCode": -1978335215,
-      "exitHex": "0x8A150011",
-      "timedOut": false,
-      "errorName": null,
-      "failureCategory": "Install"
-    }
-  ],
+  "installAttempts": {
+    "tag": "install-default",
+    "exitCode": -1,
+    "exitHex": null,
+    "timedOut": true,
+    "errorName": null,
+    "failureCategory": "Timeout"
+  },
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-26T01:10:17.4939967Z",
-    "runId": "24943755544",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-20T00:23:24.1374887Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }

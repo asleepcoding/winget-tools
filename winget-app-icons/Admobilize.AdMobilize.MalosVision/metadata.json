@@ -5,19 +5,19 @@
   "status": "InstallFailed",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-24T21:58:27.0490594Z",
-  "lastCheckedUtc": "2026-04-26T01:26:20.6404832Z",
+  "lastCheckedUtc": "2026-05-20T00:34:02.2095697Z",
   "lastUpdatedUtc": null,
-  "wingetVersion": "v1.11.510",
+  "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": false,
-  "installSeconds": 13,
+  "installSeconds": 7,
   "extractSeconds": 33,
   "uninstallSeconds": 0,
-  "durationSeconds": 48,
-  "installExitCode": -2147012859,
+  "durationSeconds": 42,
+  "installExitCode": 1,
   "installTimedOut": false,
   "uninstallExitCode": null,
   "uninstallTimedOut": false,
@@ -38,20 +38,20 @@
   "canonicalIconBytes": null,
   "canonicalIconSha256": null,
   "extractError": null,
-  "installStdErr": null,
+  "installStdErr": "Unhandled exception: System.Net.Http.HttpRequestException: The SSL connection could not be established, see inner exception.\r\n ---> System.Security.Authentication.AuthenticationException: The remote certificate is invalid because of errors in the certificate chain: NotTimeValid\r\n   at System.Net.Security.SslStream.CompleteHandshake(SslAuthenticationOptions sslAuthenticationOptions)\r\n   at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](Boolean receiveFirst, Byte[] reAuthenticationData, Ca",
   "installAttempts": [
     {
       "tag": "install-default",
-      "exitCode": -2147012859,
-      "exitHex": "0x80072F05",
+      "exitCode": 1,
+      "exitHex": "0x00000001",
       "timedOut": false,
       "errorName": null,
       "failureCategory": "Install"
     },
     {
       "tag": "install-machine",
-      "exitCode": -2147012859,
-      "exitHex": "0x80072F05",
+      "exitCode": 1,
+      "exitHex": "0x00000001",
       "timedOut": false,
       "errorName": null,
       "failureCategory": "Install"
@@ -59,9 +59,9 @@
   ],
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-26T01:26:20.6404832Z",
-    "runId": "24943755544",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-20T00:34:02.2095697Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }
