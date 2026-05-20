@@ -222,12 +222,12 @@ function Install-TrackedWingetPackage {
                 # -----------------------------------------------------------------
                 if (-not $NoNeutralize) {
                     Write-Host "  Neutralizing new artifacts ..." -ForegroundColor Cyan
-                    Disable-NewProcesses -Diff $diffs.Processes
-                    Disable-NewServices -Diff $diffs.Services
-                    Remove-NewAutorunEntries -Diff $diffs.Autorun
-                    Remove-NewScheduledTasks -Diff $diffs.ScheduledTasks
+                    if ($diffs.Processes)      { Disable-NewProcesses -Diff $diffs.Processes }
+                    if ($diffs.Services)       { Disable-NewServices -Diff $diffs.Services }
+                    if ($diffs.Autorun)        { Remove-NewAutorunEntries -Diff $diffs.Autorun }
+                    if ($diffs.ScheduledTasks) { Remove-NewScheduledTasks -Diff $diffs.ScheduledTasks }
                     Restore-PathSnapshot -Snapshot $snapBefore.Path
-                    Remove-NewShortcuts -Diff $diffs.Shortcuts
+                    if ($diffs.Shortcuts)      { Remove-NewShortcuts -Diff $diffs.Shortcuts }
                     # ARP is recorded only, not uninstalled
                 } else {
                     Write-Host "  Skipped neutralization (-NoNeutralize)" -ForegroundColor DarkGray

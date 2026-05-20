@@ -55,11 +55,13 @@ function Disable-NewProcesses {
     $systemProcs = @(
         'pwsh','powershell','cmd','conhost','svchost','csrss','services',
         'lsass','winlogon','dwm','fontdrvhost','msdtc','SearchIndexer',
-        'WmiPrvSE','dllhost','sihost','taskhostw','RuntimeBroker',
+        'WmiPrvSE','WmiPrvSE.exe','dllhost','sihost','taskhostw','RuntimeBroker',
         'ShellExperienceHost','StartMenuExperienceHost','TextInputHost',
-        'ctfmon','SecurityHealthService','smartscreen','WUDFHost','wlanext',
+        'ctfmon','SecurityHealthService','smartscreen','smartscreen.exe','WUDFHost','wlanext',
         'spoolsv','smss','wininit','System','Registry','Memory Compression',
-        'Idle','Secure System'
+        'Idle','Secure System','MoUsoCoreWorker','MoUsoCoreWorker.exe',
+        'rundll32','rundll32.exe','SearchProtocolHost','SearchProtocolHost.exe',
+        'msiexec','msiexec.exe'
     )
 
     foreach ($proc in $Diff) {

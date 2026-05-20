@@ -37,26 +37,33 @@ function Write-TrackingReport {
     foreach ($key in $Diffs.Keys | Sort-Object) {
         $diffList = $Diffs[$key]
 
-        # Handle nested PSCustomObject (e.g., Path diff with Machine/User sub-arrays)
-        if ($diffList -isnot [array] -and $diffList -isnot [System.Collections.IList]) {
-            $report.counts[$key] = 0
-            $nested = @{}
-            foreach ($prop in $diffList.PSObject.Properties) {
-                $report.counts[$key] += ($prop.Value | Measure-Object).Count
-                $nested[$prop.Name] = @()
-                foreach ($item in $prop.Value) {
-                    $ht = @{}
-                    $item.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
-                    $nested[$prop.Name] += $ht
-                }
+        # Path diff is a PSCustomObject with Machine/User array properties
+        if ($key -eq 'Path') {
+            $report.counts[$key] = ($diffList.Machine.Count + $diffList.User.Count)
+            $nested = @{
+                Machine = @()
+                User    = @()
+            }
+            foreach ($item in $diffList.Machine) {
+                $ht = @{}
+                $item.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+                $nested.Machine += $ht
+            }
+            foreach ($item in $diffList.User) {
+                $ht = @{}
+                $item.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+                $nested.User += $ht
             }
             $report.diffs[$key] = $nested
         } else {
-            $report.counts[$key] = $diffList.Count
+            # All other diffs are flat arrays of PSCustomObjects
+            $report.counts[$key] = ($diffList | Measure-Object).Count
             $serializable = @()
             foreach ($item in $diffList) {
                 $ht = @{}
-                $item.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+                if ($item -and $item.PSObject) {
+                    $item.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+                }
                 $serializable += $ht
             }
             $report.diffs[$key] = $serializable
