@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "packageId": "dotenorio.clipboard-manager-electron",
+  "packageId": "DuckDuckGo.DesktopBrowser",
   "resolvedPackageId": null,
   "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-22T07:55:41.9246097Z",
-  "lastCheckedUtc": "2026-05-21T16:13:51.4959195Z",
-  "lastUpdatedUtc": "2026-05-21T16:13:51.4959195Z",
+  "firstSeenUtc": "2026-05-21T16:30:56.7040572Z",
+  "lastCheckedUtc": "2026-05-21T16:30:56.7040572Z",
+  "lastUpdatedUtc": "2026-05-21T16:30:56.7040572Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": true,
-  "installSeconds": 14,
+  "installSeconds": 25,
   "extractSeconds": 0,
-  "uninstallSeconds": 3,
-  "durationSeconds": 18,
+  "uninstallSeconds": 2,
+  "durationSeconds": 28,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -26,12 +26,12 @@
   "extractAttemptCount": 1,
   "extractAttemptScopes": "Both",
   "extractFailureCategory": null,
-  "iconCount": 1,
-  "iconBytes": 370070.0,
-  "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
+  "iconCount": 2,
+  "iconBytes": 418309.0,
+  "appIconFile": "appx-icon.png",
+  "canonicalIconSourceName": "appx-icon.png",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456",
+  "canonicalIconSha256": "ba86465faaf353fc5d9b02ef0d63c480b58164f4781acadee6bc647ad3f5cdaf",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -42,13 +42,20 @@
     "errorName": null,
     "failureCategory": null
   },
-  "icons": {
-    "name": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
-    "bytes": 370070,
-    "sha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456"
-  },
+  "icons": [
+    {
+      "name": "appx-icon.png",
+      "bytes": 41632,
+      "sha256": "ba86465faaf353fc5d9b02ef0d63c480b58164f4781acadee6bc647ad3f5cdaf"
+    },
+    {
+      "name": "app-icon.ico",
+      "bytes": 376677,
+      "sha256": "d7b234304571f3475c7959b230923b6865bccbf0cd078af81d3c7fbd1eca1207"
+    }
+  ],
   "run": {
-    "startedAtUtc": "2026-05-21T16:13:51.4959195Z",
+    "startedAtUtc": "2026-05-21T16:30:56.7040572Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

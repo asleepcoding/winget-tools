@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "packageId": "dotenorio.clipboard-manager-electron",
+  "packageId": "dsheiko.puppetry",
   "resolvedPackageId": null,
   "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-22T07:55:41.9246097Z",
-  "lastCheckedUtc": "2026-05-21T16:13:51.4959195Z",
-  "lastUpdatedUtc": "2026-05-21T16:13:51.4959195Z",
+  "firstSeenUtc": "2026-05-21T16:28:34.6984676Z",
+  "lastCheckedUtc": "2026-05-21T16:28:34.6984676Z",
+  "lastUpdatedUtc": "2026-05-21T16:28:34.6984676Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": true,
-  "installSeconds": 14,
+  "installSeconds": 22,
   "extractSeconds": 0,
-  "uninstallSeconds": 3,
-  "durationSeconds": 18,
+  "uninstallSeconds": 5,
+  "durationSeconds": 28,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -29,9 +29,9 @@
   "iconCount": 1,
   "iconBytes": 370070.0,
   "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
+  "canonicalIconSourceName": "puppetry.{75B734D7-F3E6-48BB-BA28-F3768D5F203B}.ico",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456",
+  "canonicalIconSha256": "132c8b6cfa771b786a9476280c2a6002ca6b2dba03afef21bb3ce4a50afb8433",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -43,12 +43,12 @@
     "failureCategory": null
   },
   "icons": {
-    "name": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
+    "name": "puppetry.{75B734D7-F3E6-48BB-BA28-F3768D5F203B}.ico",
     "bytes": 370070,
-    "sha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456"
+    "sha256": "132c8b6cfa771b786a9476280c2a6002ca6b2dba03afef21bb3ce4a50afb8433"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T16:13:51.4959195Z",
+    "startedAtUtc": "2026-05-21T16:28:34.6984676Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

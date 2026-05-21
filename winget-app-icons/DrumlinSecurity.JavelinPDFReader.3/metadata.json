@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "packageId": "dotenorio.clipboard-manager-electron",
+  "packageId": "DrumlinSecurity.JavelinPDFReader.3",
   "resolvedPackageId": null,
   "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-22T07:55:41.9246097Z",
-  "lastCheckedUtc": "2026-05-21T16:13:51.4959195Z",
-  "lastUpdatedUtc": "2026-05-21T16:13:51.4959195Z",
+  "firstSeenUtc": "2026-05-21T16:27:00.5888519Z",
+  "lastCheckedUtc": "2026-05-21T16:27:00.5888519Z",
+  "lastUpdatedUtc": "2026-05-21T16:27:00.5888519Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": true,
-  "installSeconds": 14,
-  "extractSeconds": 0,
-  "uninstallSeconds": 3,
-  "durationSeconds": 18,
+  "installSeconds": 17,
+  "extractSeconds": 1,
+  "uninstallSeconds": 2,
+  "durationSeconds": 22,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -29,9 +29,9 @@
   "iconCount": 1,
   "iconBytes": 370070.0,
   "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
+  "canonicalIconSourceName": "Javelin3 PDF Reader.DrumlinSecurity.JavelinPDFReader.3.ico",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456",
+  "canonicalIconSha256": "ff61ebd9ec950556961a87d361dc4a07bdace64ed37ab7223aa6a72904e51365",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -43,12 +43,12 @@
     "failureCategory": null
   },
   "icons": {
-    "name": "clipboard-manager-electron 3.6.5.26074825-f421-5ecc-9944-350c19122210.ico",
+    "name": "Javelin3 PDF Reader.DrumlinSecurity.JavelinPDFReader.3.ico",
     "bytes": 370070,
-    "sha256": "8ddbb71608c95674d321831d2df6fe7cd7e5f3004b3952b45f25f5e57cef1456"
+    "sha256": "ff61ebd9ec950556961a87d361dc4a07bdace64ed37ab7223aa6a72904e51365"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T16:13:51.4959195Z",
+    "startedAtUtc": "2026-05-21T16:27:00.5888519Z",
     "runId": null,
     "runAttempt": null,
     "repository": null
