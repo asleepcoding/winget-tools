@@ -2,10 +2,10 @@
   "schema": 1,
   "packageId": "Datalust.Seq",
   "resolvedPackageId": null,
-  "status": "NoIcon",
+  "status": "HasIcon",
   "hasIcon": false,
-  "firstSeenUtc": "2026-04-25T17:13:11.3534670Z",
-  "lastCheckedUtc": "2026-04-25T17:13:11.3534670Z",
+  "firstSeenUtc": "2026-04-25T17:13:11.353467Z",
+  "lastCheckedUtc": "2026-04-25T17:13:11.353467Z",
   "lastUpdatedUtc": null,
   "wingetVersion": "v1.11.510",
   "packageVersion": null,
@@ -31,8 +31,8 @@
     "Both"
   ],
   "extractFailureCategory": null,
-  "iconCount": 0,
-  "iconBytes": 0,
+  "iconCount": 1,
+  "iconBytes": 766,
   "appIconFile": null,
   "canonicalIconSourceName": null,
   "canonicalIconBytes": null,
@@ -49,7 +49,7 @@
   },
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-25T17:13:11.3534670Z",
+    "startedAtUtc": "2026-04-25T17:13:11.353467Z",
     "runId": "24908564742",
     "runAttempt": "1",
     "repository": "awakecoding/winget-tools"

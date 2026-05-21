@@ -2,10 +2,10 @@
   "schema": 1,
   "packageId": "Couchcoding.Logbert",
   "resolvedPackageId": null,
-  "status": "NoIcon",
+  "status": "HasIcon",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-25T15:29:17.1836691Z",
-  "lastCheckedUtc": "2026-05-21T12:41:53.3352800Z",
+  "lastCheckedUtc": "2026-05-21T12:41:53.33528Z",
   "lastUpdatedUtc": null,
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
@@ -31,8 +31,8 @@
     "Both"
   ],
   "extractFailureCategory": null,
-  "iconCount": 0,
-  "iconBytes": 0,
+  "iconCount": 1,
+  "iconBytes": 766,
   "appIconFile": null,
   "canonicalIconSourceName": null,
   "canonicalIconBytes": null,
@@ -49,7 +49,7 @@
   },
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-05-21T12:41:53.3352800Z",
+    "startedAtUtc": "2026-05-21T12:41:53.33528Z",
     "runId": null,
     "runAttempt": null,
     "repository": null
