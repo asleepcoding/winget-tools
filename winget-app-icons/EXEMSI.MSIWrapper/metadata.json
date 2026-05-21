@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "packageId": "daltonmenezes.electron-screen-recorder",
+  "packageId": "EXEMSI.MSIWrapper",
   "resolvedPackageId": null,
-  "status": "NoIcon",
+  "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-25T16:46:04.1714862Z",
-  "lastCheckedUtc": "2026-05-21T14:29:43.0737179Z",
-  "lastUpdatedUtc": "2026-05-21T14:29:43.0737179Z",
+  "firstSeenUtc": "2026-05-21T19:30:06.7622992Z",
+  "lastCheckedUtc": "2026-05-21T19:30:06.7622992Z",
+  "lastUpdatedUtc": "2026-05-21T19:30:06.7622992Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
@@ -14,9 +14,9 @@
   "alreadyInstalled": false,
   "installedByThisRun": true,
   "installSeconds": 7,
-  "extractSeconds": 0,
+  "extractSeconds": 1,
   "uninstallSeconds": 0,
-  "durationSeconds": 7,
+  "durationSeconds": 9,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": null,
@@ -26,12 +26,12 @@
   "extractAttemptCount": 1,
   "extractAttemptScopes": "Both",
   "extractFailureCategory": null,
-  "iconCount": 0,
-  "iconBytes": 0,
+  "iconCount": 1,
+  "iconBytes": 91838.0,
   "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "Electron Screen Recorder.daltonmenezes.electron-screen-recorder_Microsoft.Winget.Source_8wekyb3d8bbwe.ico",
+  "canonicalIconSourceName": "MSI Wrapper 25.0.54.0.{91C756FB-22CE-4D5D-BD86-914EED2FE3B2}.ico",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "657b28d4df458b821466a5d32ab2c5c7f59c7b62c87d9e04579f16be1211886f",
+  "canonicalIconSha256": "c5156387dc26337da530a18c37ed1cc3bbdda39f0d1cb62b66d46ac94f9beb7b",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -43,12 +43,12 @@
     "failureCategory": null
   },
   "icons": {
-    "name": "Electron Screen Recorder.daltonmenezes.electron-screen-recorder_Microsoft.Winget.Source_8wekyb3d8bbwe.ico",
-    "bytes": 766,
-    "sha256": "657b28d4df458b821466a5d32ab2c5c7f59c7b62c87d9e04579f16be1211886f"
+    "name": "MSI Wrapper 25.0.54.0.{91C756FB-22CE-4D5D-BD86-914EED2FE3B2}.ico",
+    "bytes": 91838,
+    "sha256": "c5156387dc26337da530a18c37ed1cc3bbdda39f0d1cb62b66d46ac94f9beb7b"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T14:29:43.0737179Z",
+    "startedAtUtc": "2026-05-21T19:30:06.7622992Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

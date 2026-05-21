@@ -1741,9 +1741,12 @@ function Resolve-IconBytesFromCandidates {
         # We prefer continuing to the next candidate (InstallLocation, Shortcut,
         # etc.) rather than accepting a meaningless generic icon.
         $genericIconSha256 = @(
-            '09233FAE9313121A350730FE15D6C62EE83116F14BB83511AD59004F78A1E342', # Default Win32 console/exe icon
-            'BBBEFD550BF8AF4F7A76FB8D99C01EA5045919223C9835EE9C1DFD6AB75D08CB', # Another generic application icon
-            '1FE1B2D465347BB462A1DF2EAE0359A1461DD84E709581B5F26F6FB8654C2152'  # Generic installer icon
+            '09233FAE9313121A350730FE15D6C62EE83116F14BB83511AD59004F78A1E342', # Default Win32 console/exe icon (766B)
+            'BBBEFD550BF8AF4F7A76FB8D99C01EA5045919223C9835EE9C1DFD6AB75D08CB', # Another generic application icon (766B)
+            '1FE1B2D465347BB462A1DF2EAE0359A1461DD84E709581B5F26F6FB8654C2152', # Generic installer icon (766B)
+            'E8852BDB05153EF8EF0748C28D0BF2D8F298B5EBB83E1E781A150A04B4AA7E05', # NSIS installer icon (108866B)
+            'E21663E81163F1888F87E6ECB42EF3C7DC81647222E646C31F7E89D0FE70A01A', # Generic installer icon (26582B)
+            '657B28D4DF458B821466A5D32AB2C5C7F59C7B62C87D9E04579F16BE1211886F'  # Generic installer icon (766B)
         )
 
         $sha = [System.Security.Cryptography.SHA256]::Create()

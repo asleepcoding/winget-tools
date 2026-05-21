@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "packageId": "daltonmenezes.electron-screen-recorder",
+  "packageId": "Espanso.Espanso",
   "resolvedPackageId": null,
-  "status": "NoIcon",
+  "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-25T16:46:04.1714862Z",
-  "lastCheckedUtc": "2026-05-21T14:29:43.0737179Z",
-  "lastUpdatedUtc": "2026-05-21T14:29:43.0737179Z",
+  "firstSeenUtc": "2026-05-21T19:22:00.7407641Z",
+  "lastCheckedUtc": "2026-05-21T19:22:00.7407641Z",
+  "lastUpdatedUtc": "2026-05-21T19:22:00.7407641Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
@@ -16,7 +16,7 @@
   "installSeconds": 7,
   "extractSeconds": 0,
   "uninstallSeconds": 0,
-  "durationSeconds": 7,
+  "durationSeconds": 8,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": null,
@@ -26,12 +26,12 @@
   "extractAttemptCount": 1,
   "extractAttemptScopes": "Both",
   "extractFailureCategory": null,
-  "iconCount": 0,
-  "iconBytes": 0,
+  "iconCount": 1,
+  "iconBytes": 128623.0,
   "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "Electron Screen Recorder.daltonmenezes.electron-screen-recorder_Microsoft.Winget.Source_8wekyb3d8bbwe.ico",
+  "canonicalIconSourceName": "Espanso version 2.3.0.{0E3D83CE-A644-4E0E-8487-657C7ECF6BF9}_is1.ico",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "657b28d4df458b821466a5d32ab2c5c7f59c7b62c87d9e04579f16be1211886f",
+  "canonicalIconSha256": "c38b68792057e1d30005aeef57049e90e3a986314b0d22ea68e2208347c3df6e",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -43,12 +43,12 @@
     "failureCategory": null
   },
   "icons": {
-    "name": "Electron Screen Recorder.daltonmenezes.electron-screen-recorder_Microsoft.Winget.Source_8wekyb3d8bbwe.ico",
-    "bytes": 766,
-    "sha256": "657b28d4df458b821466a5d32ab2c5c7f59c7b62c87d9e04579f16be1211886f"
+    "name": "Espanso version 2.3.0.{0E3D83CE-A644-4E0E-8487-657C7ECF6BF9}_is1.ico",
+    "bytes": 128623,
+    "sha256": "c38b68792057e1d30005aeef57049e90e3a986314b0d22ea68e2208347c3df6e"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T14:29:43.0737179Z",
+    "startedAtUtc": "2026-05-21T19:22:00.7407641Z",
     "runId": null,
     "runAttempt": null,
     "repository": null
