@@ -2,27 +2,27 @@
   "schema": 1,
   "packageId": "CozyCloud.CozyDrive.Beta",
   "resolvedPackageId": null,
-  "status": "ExtractError",
+  "status": "InstallFailed",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-25T15:31:43.2530558Z",
-  "lastCheckedUtc": "2026-04-26T13:36:41.6987022Z",
+  "lastCheckedUtc": "2026-05-21T12:45:02.4981319Z",
   "lastUpdatedUtc": null,
-  "wingetVersion": "v1.11.510",
+  "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
-  "installedByThisRun": true,
-  "installSeconds": 13,
+  "installedByThisRun": false,
+  "installSeconds": 4,
   "extractSeconds": 33,
-  "uninstallSeconds": 2,
-  "durationSeconds": 49,
-  "installExitCode": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 39,
+  "installExitCode": -1978335216,
   "installTimedOut": false,
-  "uninstallExitCode": 0,
+  "uninstallExitCode": null,
   "uninstallTimedOut": false,
-  "failureCategory": "Extraction",
-  "installAttemptTag": "install-default",
+  "failureCategory": "Install",
+  "installAttemptTag": "install-machine",
   "extractAttemptCount": 4,
   "extractAttemptScopes": [
     "Both",
@@ -37,21 +37,31 @@
   "canonicalIconSourceName": null,
   "canonicalIconBytes": null,
   "canonicalIconSha256": null,
-  "extractError": "No ARP entries matched in scope 'Both' for 'CozyCloud.CozyDrive.Beta'. Is the package actually installed?; Script=D:\\a\\winget-tools\\winget-tools\\scripts\\Get-WinGetIcon.ps1:742; Line=throw \"No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?\"; Stack=at <ScriptBlock>, D:\\a\\winget-tools\\winget-tools\\scripts\\Get-WinGetIcon.ps1: line 742 | at Invoke-IconExtraction, D:\\a\\winget-tools\\winget-tools\\scripts\\Invoke-BulkIconExtraction.ps1: line 234 | at Invoke-IconExtractionWi",
+  "extractError": null,
   "installStdErr": null,
-  "installAttempts": {
-    "tag": "install-default",
-    "exitCode": 0,
-    "exitHex": "0x00000000",
-    "timedOut": false,
-    "errorName": null,
-    "failureCategory": null
-  },
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335216,
+      "exitHex": "0x8A150010",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-26T13:36:41.6987022Z",
-    "runId": "24956355451",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-21T12:45:02.4981319Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }

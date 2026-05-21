@@ -100,6 +100,9 @@ param(
 
     [string] $PackageStateRoot,
 
+    [Parameter(HelpMessage = 'Directory containing per-package tracked-install JSON snapshots. Passed to Get-WinGetIcon.ps1 as a fallback when live ARP matching fails.')]
+    [string] $TrackingDir,
+
     [Parameter(HelpMessage = '0-based shard index. Used with -ShardCount to deterministically slice the package list.')]
     [ValidateRange(0, 999)]
     [int]    $ShardIndex = 0,
@@ -216,7 +219,8 @@ function Invoke-IconExtraction {
         [string] $Scope = 'Both',
         [switch] $RefreshManifest,
         [switch] $Force,
-        [switch] $DisableHeuristicFallback
+        [switch] $DisableHeuristicFallback,
+        [string] $TrackingDir
     )
 
     # Returns @{ Files = FileInfo[]; Error = string }.
@@ -233,7 +237,7 @@ function Invoke-IconExtraction {
     }
 
     try {
-        $null = & $script:iconScript -PackageId $PackageId -OutDir $PkgOutDir -Scope $Scope -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback 2>&1
+        $null = & $script:iconScript -PackageId $PackageId -OutDir $PkgOutDir -Scope $Scope -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir 2>&1
     }
     catch {
         $err = Format-ExceptionDetails -ErrorRecord $_
@@ -306,7 +310,8 @@ function Invoke-IconExtractionWithRetry {
         [Parameter(Mandatory)] [string] $PkgOutDir,
         [switch] $Force,
         [switch] $AfterInstall,
-        [switch] $DisableHeuristicFallback
+        [switch] $DisableHeuristicFallback,
+        [string] $TrackingDir
     )
 
     $attemptPlan = @(
@@ -330,7 +335,7 @@ function Invoke-IconExtractionWithRetry {
                 Start-Sleep -Seconds $attempt.DelaySeconds
             }
 
-            $result = Invoke-IconExtraction -PackageId $PackageId -PkgOutDir $PkgOutDir -Scope $attempt.Scope -RefreshManifest:$attempt.RefreshManifest -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback
+            $result = Invoke-IconExtraction -PackageId $PackageId -PkgOutDir $PkgOutDir -Scope $attempt.Scope -RefreshManifest:$attempt.RefreshManifest -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir
             $last = $result
             $attemptError = $null
             if ($result.Error) {
@@ -1150,7 +1155,7 @@ foreach ($pkg in $todo) {
         # installed locally (e.g. dev box, preinstalled on runner).
         Write-Host "  Probing for existing icon..." -ForegroundColor Gray
         $extStart = Get-Date
-        $probe = Invoke-IconExtractionWithRetry -PackageId $resolvedPackageId -PkgOutDir $pkgOutDir -Force:$Force -DisableHeuristicFallback
+        $probe = Invoke-IconExtractionWithRetry -PackageId $resolvedPackageId -PkgOutDir $pkgOutDir -Force:$Force -DisableHeuristicFallback -TrackingDir $TrackingDir
         $record.ExtractSeconds = [int]((Get-Date) - $extStart).TotalSeconds
         $record.ExtractAttemptCount = @($probe.Attempts).Count
         $record.ExtractAttemptScopes = @($probe.Attempts | ForEach-Object { $_.scope })
@@ -1233,7 +1238,7 @@ foreach ($pkg in $todo) {
             if (($record.Status -in @('Installed', 'AlreadyInstalled')) -or $shouldVerifyInstallFailure) {
                 Write-Host "  Extracting icon..." -ForegroundColor Gray
                 $extStart = Get-Date
-                $ex = Invoke-IconExtractionWithRetry -PackageId $resolvedPackageId -PkgOutDir $pkgOutDir -Force:$Force -AfterInstall
+                $ex = Invoke-IconExtractionWithRetry -PackageId $resolvedPackageId -PkgOutDir $pkgOutDir -Force:$Force -AfterInstall -TrackingDir $TrackingDir
                 $record.ExtractSeconds = [int]((Get-Date) - $extStart).TotalSeconds
                 $record.ExtractAttemptCount = @($ex.Attempts).Count
                 $record.ExtractAttemptScopes = @($ex.Attempts | ForEach-Object { $_.scope })

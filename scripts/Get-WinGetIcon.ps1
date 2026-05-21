@@ -70,7 +70,10 @@ param(
     [switch] $Force,
 
     [Parameter(HelpMessage = 'Disable broader common-install-location and shortcut fallback. Use this for strict ARP-centric probing.')]
-    [switch] $DisableHeuristicFallback
+    [switch] $DisableHeuristicFallback,
+
+    [Parameter(HelpMessage = 'Path to tracked-install JSON snapshots. When ARP matching fails, uses the per-package diffs.Arp entries from tracking.json as a last-ditch fallback.')]
+    [string] $TrackingDir
 )
 
 Set-StrictMode -Version Latest
@@ -603,6 +606,85 @@ namespace WinGetIconTools
     }
 }
 '@
+}
+
+function Get-TrackedArpFallback {
+    <#
+    .SYNOPSIS
+        Reads tracked-install ARP diff entries when live ARP matching fails.
+        Uses the recorded KeyPaths to re-query the live registry for current
+        values, because the serialized JSON may only have limited fields
+        (especially: missing DisplayIcon on older snapshots).
+    #>
+    param(
+        [Parameter(Mandatory)] [string] $PackageId,
+        [Parameter(Mandatory)] [string] $TrackingDir
+    )
+
+    $safeName = ($PackageId -replace '[^A-Za-z0-9._-]', '_')
+    $trackPath = Join-Path $TrackingDir $safeName 'tracking.json'
+    if (-not (Test-Path -LiteralPath $trackPath)) { return @() }
+
+    try {
+        $doc = Get-Content -LiteralPath $trackPath -Raw | ConvertFrom-Json
+        if (-not $doc.diffs) { return @() }
+        $arpDiff = $doc.diffs.Arp
+        if (-not $arpDiff) { return @() }
+        # diffs.Arp may be either a flat array (older tracking) or an object
+        # with .New/.Old (newer format)
+        $list = @()
+        if ($arpDiff -is [System.Collections.IEnumerable] -and -not ($arpDiff -is [string])) {
+            $list = @($arpDiff)
+        }
+        elseif ($arpDiff.New) {
+            $list = @($arpDiff.New)
+        }
+        $results = New-Object System.Collections.Generic.List[object]
+        foreach ($e in $list) {
+            $keyPath = [string]$e.KeyPath
+            if ([string]::IsNullOrWhiteSpace($keyPath)) { continue }
+
+            # Re-read live registry at the recorded key path
+            $live = Get-ItemProperty -LiteralPath $keyPath -ErrorAction SilentlyContinue
+            if (-not $live) { continue }
+
+            $hiveLabel = if ($keyPath -like '*HKEY_LOCAL_MACHINE*') { 'HKLM-64' } else { 'HKCU' }
+            $regKeyName = Split-Path -Leaf $keyPath
+            $displayName = if ($live.DisplayName) { [string]$live.DisplayName } else { [string]$e.DisplayName }
+            $publisher = if ($live.Publisher) { [string]$live.Publisher } else { [string]$e.Publisher }
+            $displayVer = if ($live.DisplayVersion) { [string]$live.DisplayVersion } else { [string]$e.DisplayVersion }
+            $displayIcon = if ($live.DisplayIcon) { [string]$live.DisplayIcon } else { '' }
+            $installLoc = if ($live.InstallLocation) { [string]$live.InstallLocation } else { [string]$e.InstallLocation }
+            $installDate = if ($live.InstallDate) { [string]$live.InstallDate } else { [string]$e.InstallDate }
+            $uninst = if ($live.UninstallString) { [string]$live.UninstallString } else { [string]$e.UninstallString }
+            $quietUninst = if ($live.QuietUninstallString) { [string]$live.QuietUninstallString } else { [string]$e.QuietUninstallString }
+            $modify = if ($live.ModifyPath) { [string]$live.ModifyPath } else { [string]$e.ModifyPath }
+            $winInst = if ($live.PSObject.Properties['WindowsInstaller']) { $live.WindowsInstaller } else { $null }
+            $isMsi = ($winInst -is [int] -and $winInst -eq 1)
+
+            $results.Add([pscustomobject]@{
+                Hive          = $hiveLabel
+                ProductCode   = $regKeyName
+                DisplayName   = $displayName
+                Publisher     = $publisher
+                DisplayVersion= $displayVer
+                DisplayIcon   = $displayIcon
+                InstallLocation = $installLoc
+                InstallDate   = $installDate
+                UninstallString = $uninst
+                QuietUninstallString = $quietUninst
+                ModifyPath    = $modify
+                LastWriteTime = $null
+                IsMsi         = $isMsi
+                MatchKind     = 'TrackedDiff'
+            }) | Out-Null
+        }
+        return @($results.ToArray())
+    }
+    catch {
+        Write-Verbose "Tracked ARP fallback failed for '$PackageId': $_"
+        return @()
+    }
 }
 
 # =============================================================================
@@ -1788,12 +1870,25 @@ Write-Verbose ("Hints: ProductCodes=[{0}] Names=[{1}] Publishers=[{2}] Version={
 $arpMatches = @(Find-ArpEntries -Hints $hints -Scope $Scope)
 $hintOnlyCandidates = @()
 if (-not $arpMatches -or $arpMatches.Count -eq 0) {
-    $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
-    if ($hintOnlyCandidates.Count -eq 0) {
-        throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
+    # -----------------------------------------------------------------
+    # Try tracked-install ARP diff as a last-ditch fallback
+    # -----------------------------------------------------------------
+    if ($TrackingDir) {
+        $trackedEntries = @(Get-TrackedArpFallback -PackageId $PackageId -TrackingDir $TrackingDir)
+        if ($trackedEntries.Count -gt 0) {
+            Write-Verbose ("No live ARP match for '{0}', but found {1} tracked ARP diff entry/ies. Using as fallback." -f $PackageId, $trackedEntries.Count)
+            $arpMatches = $trackedEntries
+        }
     }
 
-    Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
+    if (-not $arpMatches -or $arpMatches.Count -eq 0) {
+        $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
+        if ($hintOnlyCandidates.Count -eq 0) {
+            throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
+        }
+
+        Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
+    }
 }
 else {
     Write-Verbose ("ARP matches: {0}" -f $arpMatches.Count)

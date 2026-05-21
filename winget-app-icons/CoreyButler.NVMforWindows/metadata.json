@@ -5,24 +5,24 @@
   "status": "ExtractError",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-25T15:15:31.1271268Z",
-  "lastCheckedUtc": "2026-04-26T13:28:01.2809378Z",
+  "lastCheckedUtc": "2026-05-21T12:33:39.6850762Z",
   "lastUpdatedUtc": null,
-  "wingetVersion": "v1.11.510",
+  "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
-  "alreadyInstalled": false,
-  "installedByThisRun": true,
-  "installSeconds": 6,
-  "extractSeconds": 32,
-  "uninstallSeconds": 180,
-  "durationSeconds": 219,
-  "installExitCode": 0,
+  "alreadyInstalled": true,
+  "installedByThisRun": false,
+  "installSeconds": 4,
+  "extractSeconds": 31,
+  "uninstallSeconds": 0,
+  "durationSeconds": 36,
+  "installExitCode": -1978335189,
   "installTimedOut": false,
-  "uninstallExitCode": -1,
-  "uninstallTimedOut": true,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
   "failureCategory": "Extraction",
-  "installAttemptTag": "install-default",
+  "installAttemptTag": "install-machine",
   "extractAttemptCount": 4,
   "extractAttemptScopes": [
     "Both",
@@ -37,21 +37,31 @@
   "canonicalIconSourceName": null,
   "canonicalIconBytes": null,
   "canonicalIconSha256": null,
-  "extractError": "No ARP entries matched in scope 'Both' for 'CoreyButler.NVMforWindows'. Is the package actually installed?; Script=D:\\a\\winget-tools\\winget-tools\\scripts\\Get-WinGetIcon.ps1:742; Line=throw \"No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?\"; Stack=at <ScriptBlock>, D:\\a\\winget-tools\\winget-tools\\scripts\\Get-WinGetIcon.ps1: line 742 | at Invoke-IconExtraction, D:\\a\\winget-tools\\winget-tools\\scripts\\Invoke-BulkIconExtraction.ps1: line 234 | at Invoke-IconExtractionW",
+  "extractError": "No ARP entries matched in scope 'Both' for 'CoreyButler.NVMforWindows', and hint-only candidates did not produce icon bytes.; Script=C:\\dev\\winget-tools\\scripts\\Get-WinGetIcon.ps1:1902; Line=throw \"No ARP entries matched in scope '$Scope' for '$PackageId', and hint-only candidates did not produce icon bytes.\"; Stack=at <ScriptBlock>, C:\\dev\\winget-tools\\scripts\\Get-WinGetIcon.ps1: line 1902 | at Invoke-IconExtraction, C:\\dev\\winget-tools\\scripts\\Invoke-BulkIconExtraction.ps1: line 236 | at Invoke-IconExtrac",
   "installStdErr": null,
-  "installAttempts": {
-    "tag": "install-default",
-    "exitCode": 0,
-    "exitHex": "0x00000000",
-    "timedOut": false,
-    "errorName": null,
-    "failureCategory": null
-  },
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
   "icons": null,
   "run": {
-    "startedAtUtc": "2026-04-26T13:28:01.2809378Z",
-    "runId": "24956355451",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-21T12:33:39.6850762Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }

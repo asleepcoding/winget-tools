@@ -22,15 +22,21 @@ function Get-ArpSnapshot {
         Get-ChildItem -LiteralPath $regPath -ErrorAction SilentlyContinue | ForEach-Object {
             $props = Get-ItemProperty -LiteralPath $_.PSPath -ErrorAction SilentlyContinue
             if (-not $props) { return }
+            $regKeyName = Split-Path -Leaf $_.PSPath
             $entries.Add([PSCustomObject]@{
-                KeyPath         = $_.PSPath
-                DisplayName     = Get-OptionalPropertyValue -InputObject $props -Name 'DisplayName'
-                DisplayVersion  = Get-OptionalPropertyValue -InputObject $props -Name 'DisplayVersion'
-                Publisher       = Get-OptionalPropertyValue -InputObject $props -Name 'Publisher'
-                InstallDate     = Get-OptionalPropertyValue -InputObject $props -Name 'InstallDate'
-                UninstallString = Get-OptionalPropertyValue -InputObject $props -Name 'UninstallString'
-                QuietUninstallString = Get-OptionalPropertyValue -InputObject $props -Name 'QuietUninstallString'
-            })
+                    KeyPath              = $_.PSPath
+                    DisplayName          = Get-OptionalPropertyValue -InputObject $props -Name 'DisplayName'
+                    DisplayVersion       = Get-OptionalPropertyValue -InputObject $props -Name 'DisplayVersion'
+                    Publisher            = Get-OptionalPropertyValue -InputObject $props -Name 'Publisher'
+                    InstallDate          = Get-OptionalPropertyValue -InputObject $props -Name 'InstallDate'
+                    InstallLocation      = Get-OptionalPropertyValue -InputObject $props -Name 'InstallLocation'
+                    DisplayIcon          = Get-OptionalPropertyValue -InputObject $props -Name 'DisplayIcon'
+                    UninstallString      = Get-OptionalPropertyValue -InputObject $props -Name 'UninstallString'
+                    QuietUninstallString = Get-OptionalPropertyValue -InputObject $props -Name 'QuietUninstallString'
+                    ModifyPath           = Get-OptionalPropertyValue -InputObject $props -Name 'ModifyPath'
+                    WindowsInstaller     = Get-OptionalPropertyValue -InputObject $props -Name 'WindowsInstaller'
+                    ProductCode          = $regKeyName
+                })
         }
     }
 

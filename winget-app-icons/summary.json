@@ -1,0 +1,49 @@
+{
+  "GeneratedAt": "2026-05-21T13:29:30.6563080Z",
+  "OutDir": "C:\\dev\\winget-tools\\winget-app-icons",
+  "WingetVersion": "v1.29.170-preview",
+  "ShardIndex": 0,
+  "ShardCount": 1,
+  "Total": 1,
+  "Unsupported": 0,
+  "Skipped": 0,
+  "Processed": 1,
+  "StatusCounts": {
+    "IconExtracted": 1
+  },
+  "FailureCategoryCounts": {},
+  "Results": [
+    {
+      "PackageId": "DavidMoore.IPFilterUpdater",
+      "ResolvedPackageId": "DavidMoore.IPFilterUpdater",
+      "Status": "IconExtracted",
+      "FailureCategory": "",
+      "AlreadyInstalled": true,
+      "InstallExitCode": null,
+      "InstallTimedOut": false,
+      "InstallAttemptTag": "",
+      "InstallAttempts": [],
+      "InstallStdErr": "",
+      "InstalledByThisRun": false,
+      "InstallSeconds": 0,
+      "ExtractSeconds": 0,
+      "ExtractAttemptCount": 1,
+      "ExtractAttemptScopes": [
+        "Both"
+      ],
+      "ExtractFailureCategory": "",
+      "IconCount": 1,
+      "IconBytes": 17638.0,
+      "IconFiles": [
+        "IPFilter 3.0.5-beta.DavidMoore.IPFilterUpdater_Microsoft.Winget.Source_8wekyb3d8bbwe.ico"
+      ],
+      "ExtractError": "",
+      "UninstallExitCode": null,
+      "UninstallTimedOut": false,
+      "UninstallSeconds": 0,
+      "DurationSeconds": 0,
+      "StartedAt": "2026-05-21T13:29:30.2214359Z",
+      "CleanupReport": null
+    }
+  ]
+}
