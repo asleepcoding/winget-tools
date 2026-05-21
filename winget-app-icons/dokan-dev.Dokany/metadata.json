@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "dokan-dev.Dokany",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-05-21T16:11:01.9362301Z",
   "lastCheckedUtc": "2026-05-21T16:11:01.9362301Z",

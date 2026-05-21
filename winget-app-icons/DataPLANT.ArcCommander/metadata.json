@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "DataPLANT.ArcCommander",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-25T17:15:09.3655074Z",
   "lastCheckedUtc": "2026-04-25T17:15:09.3655074Z",

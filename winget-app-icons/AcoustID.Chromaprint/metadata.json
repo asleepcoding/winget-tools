@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "AcoustID.Chromaprint",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:34:05.7310783Z",
   "lastCheckedUtc": "2026-05-20T00:23:20.3857638Z",

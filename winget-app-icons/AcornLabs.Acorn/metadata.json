@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "AcornLabs.Acorn",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:33:26.9109621Z",
   "lastCheckedUtc": "2026-05-20T00:23:19.6928684Z",

@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "cypherpunks.pidgin-otr",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": false,
   "firstSeenUtc": "2026-04-25T16:42:52.4657388Z",
   "lastCheckedUtc": "2026-04-25T16:42:52.4657388Z",

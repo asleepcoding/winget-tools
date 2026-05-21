@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "codehex.Neo-cowsay",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-25T14:13:53.3269747Z",
   "lastCheckedUtc": "2026-05-21T12:15:04.1856738Z",

@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "CrowdSecurity.CrowdSecWindowsFirewallBouncer",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-25T15:45:47.5353203Z",
   "lastCheckedUtc": "2026-04-26T13:47:23.2794082Z",

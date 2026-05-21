@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "EclipseAdoptium.Temurin.11.JDK",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-05-21T16:51:09.2632483Z",
   "lastCheckedUtc": "2026-05-21T16:51:09.2632483Z",

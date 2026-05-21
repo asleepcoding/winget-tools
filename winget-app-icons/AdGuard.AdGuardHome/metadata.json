@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "AdGuard.AdGuardHome",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:50:22.1229109Z",
   "lastCheckedUtc": "2026-05-20T00:33:49.2316306Z",

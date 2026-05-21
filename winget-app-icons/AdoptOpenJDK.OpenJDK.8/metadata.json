@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "AdoptOpenJDK.OpenJDK.8",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T22:13:11.0703492Z",
   "lastCheckedUtc": "2026-05-20T00:38:40.7250193Z",

@@ -2,11 +2,11 @@
   "schema": 1,
   "packageId": "activescott.lessmsi",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:41:00.7812727Z",
-  "lastCheckedUtc": "2026-05-20T00:33:28.4283740Z",
-  "lastUpdatedUtc": "2026-05-20T00:33:28.4283740Z",
+  "lastCheckedUtc": "2026-05-20T00:33:28.428374Z",
+  "lastUpdatedUtc": "2026-05-20T00:33:28.428374Z",
   "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
@@ -41,7 +41,7 @@
     "sha256": "bbbefd550bf8af4f7a76fb8d99c01ea5045919223c9835ee9c1dfd6ab75d08cb"
   },
   "run": {
-    "startedAtUtc": "2026-05-20T00:33:28.4283740Z",
+    "startedAtUtc": "2026-05-20T00:33:28.428374Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "DavidWheatley.fs2020-livery-manager",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-26T15:31:48.9433326Z",
   "lastCheckedUtc": "2026-05-21T14:31:03.5695232Z",

@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "CrowdSecurity.CrowdSec",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-25T15:44:30.2593399Z",
   "lastCheckedUtc": "2026-04-26T13:46:15.4733793Z",

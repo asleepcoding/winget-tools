@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "7zip.7zip",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-20T16:27:27.2579089Z",
   "lastCheckedUtc": "2026-05-20T00:18:02.2127578Z",

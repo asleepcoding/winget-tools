@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "achannarasappa.ticker",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:32:49.527332Z",
   "lastCheckedUtc": "2026-05-20T00:23:18.9224286Z",

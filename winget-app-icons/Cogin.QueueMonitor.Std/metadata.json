@@ -2,11 +2,11 @@
   "schema": 1,
   "packageId": "Cogin.QueueMonitor.Std",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-25T14:35:23.9453531Z",
-  "lastCheckedUtc": "2026-05-21T12:19:43.1480440Z",
-  "lastUpdatedUtc": "2026-05-21T12:19:43.1480440Z",
+  "lastCheckedUtc": "2026-05-21T12:19:43.148044Z",
+  "lastUpdatedUtc": "2026-05-21T12:19:43.148044Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
@@ -58,7 +58,7 @@
     "sha256": "09233fae9313121a350730fe15d6c62ee83116f14bb83511ad59004f78a1e342"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T12:19:43.1480440Z",
+    "startedAtUtc": "2026-05-21T12:19:43.148044Z",
     "runId": null,
     "runAttempt": null,
     "repository": null
