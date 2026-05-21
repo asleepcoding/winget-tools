@@ -1730,16 +1730,37 @@ function Resolve-IconBytesFromCandidates {
             }
         }
 
-        if ($bytes -and $bytes.Length -gt 0) {
-            return [pscustomobject]@{
-                Bytes      = $bytes
-                IconPath   = $iconPath
-                IconIndex  = $iconIndex
-                Reason     = $candidate.Reason
-            }
+        if (-not ($bytes -and $bytes.Length -gt 0)) {
+            Write-Verbose ("[{0}] Candidate '{1}' from {2} did not produce icon bytes." -f $MatchId, $iconPath, $candidate.Reason)
+            continue
         }
 
-        Write-Verbose ("[{0}] Candidate '{1}' from {2} did not produce icon bytes." -f $MatchId, $iconPath, $candidate.Reason)
+        # Reject known generic / template / default icon hashes
+        # These are 766-byte default icons produced by ExtractAssociatedIcon on
+        # .exe files that have no custom RT_GROUP_ICON resource.
+        # We prefer continuing to the next candidate (InstallLocation, Shortcut,
+        # etc.) rather than accepting a meaningless generic icon.
+        $genericIconSha256 = @(
+            '09233FAE9313121A350730FE15D6C62EE83116F14BB83511AD59004F78A1E342', # Default Win32 console/exe icon
+            'BBBEFD550BF8AF4F7A76FB8D99C01EA5045919223C9835EE9C1DFD6AB75D08CB', # Another generic application icon
+            '1FE1B2D465347BB462A1DF2EAE0359A1461DD84E709581B5F26F6FB8654C2152'  # Generic installer icon
+        )
+
+        $sha = [System.Security.Cryptography.SHA256]::Create()
+        $hashHex = [BitConverter]::ToString($sha.ComputeHash($bytes)) -replace '-',''
+        $sha.Dispose()
+
+        if ($genericIconSha256 -contains $hashHex) {
+            Write-Warning ("[{0}] Rejected candidate '{1}' from {2}: known generic icon hash ({3})." -f $MatchId, $iconPath, $candidate.Reason, ($hashHex.Substring(0,16) + '...'))
+            continue
+        }
+
+        return [pscustomobject]@{
+            Bytes      = $bytes
+            IconPath   = $iconPath
+            IconIndex  = $iconIndex
+            Reason     = $candidate.Reason
+        }
     }
 
     return $null
