@@ -73,8 +73,25 @@ function Disable-NewProcesses {
 
     foreach ($proc in $Diff) {
         if ($proc.ProcessName -in $systemProcs) { continue }
+        # Skip if process already exited
+        $stillRunning = Get-Process -Id $proc.Id -ErrorAction SilentlyContinue
+        if (-not $stillRunning) {
+            Write-Host "    [PROCESS] Already exited: $($proc.ProcessName) (PID $($proc.Id))" -ForegroundColor DarkGray
+            continue
+        }
+        # Skip processes in the current process tree to avoid killing ourselves
+        $procAncestors = @()
+        $current = Get-Process -Id $PID
+        while ($current.Parent) {
+            $procAncestors += $current.Parent.Id
+            $current = $current.Parent
+        }
+        if ($proc.Id -in $procAncestors -or $proc.Id -eq $PID) {
+            Write-Host "    [PROCESS] Skipped (in current process tree): $($proc.ProcessName) (PID $($proc.Id))" -ForegroundColor DarkGray
+            continue
+        }
         try {
-            Stop-Process -Id $proc.Id -Force -ErrorAction Stop
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
             Write-Host "    [PROCESS] Killed new process: $($proc.ProcessName) (PID $($proc.Id))" -ForegroundColor DarkYellow
         } catch {
             Write-Host "    [PROCESS] Failed to kill $($proc.ProcessName) (PID $($proc.Id)): $_" -ForegroundColor DarkRed

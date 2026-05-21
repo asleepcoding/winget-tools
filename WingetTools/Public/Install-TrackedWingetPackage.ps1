@@ -222,12 +222,24 @@ function Install-TrackedWingetPackage {
                 # -----------------------------------------------------------------
                 if (-not $NoNeutralize) {
                     Write-Host "  Neutralizing new artifacts ..." -ForegroundColor Cyan
-                    if ($diffs.Processes)      { Disable-NewProcesses -Diff $diffs.Processes }
-                    if ($diffs.Services)       { Disable-NewServices -Diff $diffs.Services }
-                    if ($diffs.Autorun)        { Remove-NewAutorunEntries -Diff $diffs.Autorun }
-                    if ($diffs.ScheduledTasks) { Remove-NewScheduledTasks -Diff $diffs.ScheduledTasks }
-                    Restore-PathSnapshot -Snapshot $snapBefore.Path
-                    if ($diffs.Shortcuts)      { Remove-NewShortcuts -Diff $diffs.Shortcuts }
+                    try {
+                        if ($diffs.Processes)      { Disable-NewProcesses -Diff $diffs.Processes }
+                    } catch { Write-Host "    [PROCESS] Neutralization error: $_" -ForegroundColor DarkRed }
+                    try {
+                        if ($diffs.Services)       { Disable-NewServices -Diff $diffs.Services }
+                    } catch { Write-Host "    [SERVICE] Neutralization error: $_" -ForegroundColor DarkRed }
+                    try {
+                        if ($diffs.Autorun)        { Remove-NewAutorunEntries -Diff $diffs.Autorun }
+                    } catch { Write-Host "    [AUTORUN] Neutralization error: $_" -ForegroundColor DarkRed }
+                    try {
+                        if ($diffs.ScheduledTasks) { Remove-NewScheduledTasks -Diff $diffs.ScheduledTasks }
+                    } catch { Write-Host "    [SCHEDTASK] Neutralization error: $_" -ForegroundColor DarkRed }
+                    try {
+                        Restore-PathSnapshot -Snapshot $snapBefore.Path
+                    } catch { Write-Host "    [PATH] Neutralization error: $_" -ForegroundColor DarkRed }
+                    try {
+                        if ($diffs.Shortcuts)      { Remove-NewShortcuts -Diff $diffs.Shortcuts }
+                    } catch { Write-Host "    [SHORTCUT] Neutralization error: $_" -ForegroundColor DarkRed }
                     # ARP is recorded only, not uninstalled
                 } else {
                     Write-Host "  Skipped neutralization (-NoNeutralize)" -ForegroundColor DarkGray
