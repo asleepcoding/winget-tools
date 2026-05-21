@@ -53,15 +53,22 @@ function Disable-NewProcesses {
     )
 
     $systemProcs = @(
-        'pwsh','powershell','cmd','conhost','svchost','csrss','services',
-        'lsass','winlogon','dwm','fontdrvhost','msdtc','SearchIndexer',
-        'WmiPrvSE','WmiPrvSE.exe','dllhost','sihost','taskhostw','RuntimeBroker',
-        'ShellExperienceHost','StartMenuExperienceHost','TextInputHost',
-        'ctfmon','SecurityHealthService','smartscreen','smartscreen.exe','WUDFHost','wlanext',
-        'spoolsv','smss','wininit','System','Registry','Memory Compression',
-        'Idle','Secure System','MoUsoCoreWorker','MoUsoCoreWorker.exe',
+        'pwsh','pwsh.exe','powershell','powershell.exe','cmd','cmd.exe','conhost','conhost.exe',
+        'svchost','svchost.exe','csrss','csrss.exe','services','services.exe',
+        'lsass','lsass.exe','winlogon','winlogon.exe','dwm','dwm.exe',
+        'fontdrvhost','fontdrvhost.exe','msdtc','msdtc.exe','SearchIndexer','SearchIndexer.exe',
+        'WmiPrvSE','WmiPrvSE.exe','dllhost','dllhost.exe','sihost','sihost.exe',
+        'taskhostw','taskhostw.exe','RuntimeBroker','RuntimeBroker.exe',
+        'ShellExperienceHost','ShellExperienceHost.exe',
+        'StartMenuExperienceHost','StartMenuExperienceHost.exe',
+        'TextInputHost','TextInputHost.exe',
+        'ctfmon','ctfmon.exe','SecurityHealthService','SecurityHealthService.exe',
+        'smartscreen','smartscreen.exe','WUDFHost','WUDFHost.exe','wlanext','wlanext.exe',
+        'spoolsv','spoolsv.exe','smss','smss.exe','wininit','wininit.exe',
+        'System','Registry','Memory Compression','Idle','Secure System',
+        'MoUsoCoreWorker','MoUsoCoreWorker.exe',
         'rundll32','rundll32.exe','SearchProtocolHost','SearchProtocolHost.exe',
-        'msiexec','msiexec.exe'
+        'msiexec','msiexec.exe','OpenConsole','OpenConsole.exe'
     )
 
     foreach ($proc in $Diff) {
