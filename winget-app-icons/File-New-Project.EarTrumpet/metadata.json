@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "packageId": "File-New-Project.EarTrumpet",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-21T20:59:35.7460083Z",
+  "lastCheckedUtc": "2026-05-21T20:59:35.7460083Z",
+  "lastUpdatedUtc": "2026-05-21T20:59:35.7460083Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 15,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 17,
+  "installExitCode": 0,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-default",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 2,
+  "iconBytes": 52357.0,
+  "appIconFile": "appx-icon.png",
+  "canonicalIconSourceName": "appx-icon.png",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "18e2adb6b9d119821156294695067c35db159c552c9dd3f14ada489eab204d35",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": {
+    "tag": "install-default",
+    "exitCode": 0,
+    "exitHex": "0x00000000",
+    "timedOut": false,
+    "errorName": null,
+    "failureCategory": null
+  },
+  "icons": [
+    {
+      "name": "appx-icon.png",
+      "bytes": 17913,
+      "sha256": "18e2adb6b9d119821156294695067c35db159c552c9dd3f14ada489eab204d35"
+    },
+    {
+      "name": "app-icon.ico",
+      "bytes": 34444,
+      "sha256": "a305ea345e4c049949821123637d6f4b43403384eecccb2549f72521bd4af693"
+    }
+  ],
+  "run": {
+    "startedAtUtc": "2026-05-21T20:59:35.7460083Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
