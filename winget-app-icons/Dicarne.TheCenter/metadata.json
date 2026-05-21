@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "packageId": "Dicarne.TheCenter",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-21T15:02:24.0586567Z",
+  "lastCheckedUtc": "2026-05-21T15:02:24.0586567Z",
+  "lastUpdatedUtc": "2026-05-21T15:02:24.0586567Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 16,
+  "extractSeconds": 0,
+  "uninstallSeconds": 1,
+  "durationSeconds": 18,
+  "installExitCode": -1978335216,
+  "installTimedOut": false,
+  "uninstallExitCode": -1978335212,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 61163.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "the_center_desktop.Dicarne.TheCenter.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "cd77628d98983a2e8d7324cb34128f1b2cf41a8e18c2808377995462deaf096d",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335226,
+      "exitHex": "0x8A150006",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335216,
+      "exitHex": "0x8A150010",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "the_center_desktop.Dicarne.TheCenter.ico",
+    "bytes": 61163,
+    "sha256": "cd77628d98983a2e8d7324cb34128f1b2cf41a8e18c2808377995462deaf096d"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-21T15:02:24.0586567Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

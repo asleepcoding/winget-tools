@@ -5,9 +5,9 @@
   "status": "HasIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-26T15:43:51.1563447Z",
-  "lastCheckedUtc": "2026-04-26T15:43:51.1563447Z",
-  "lastUpdatedUtc": "2026-04-26T15:43:51.1563447Z",
-  "wingetVersion": "v1.11.510",
+  "lastCheckedUtc": "2026-05-21T14:33:23.3338001Z",
+  "lastUpdatedUtc": "2026-05-21T14:33:23.3338001Z",
+  "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
@@ -16,7 +16,7 @@
   "installSeconds": 18,
   "extractSeconds": 0,
   "uninstallSeconds": 2,
-  "durationSeconds": 22,
+  "durationSeconds": 21,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -30,7 +30,7 @@
   "iconBytes": 25450.0,
   "appIconFile": "app-icon.ico",
   "canonicalIconSourceName": "DeFi Wallet 4.2.5.645b5191-c0b4-5fbc-b551-892e177318a7.ico",
-  "canonicalIconBytes": 25450,
+  "canonicalIconBytes": 1,
   "canonicalIconSha256": "ea0569964e3575b5825522c97a6564de6705f07b0e5ee1fba3b8e19ab37c1795",
   "extractError": null,
   "installStdErr": null,
@@ -48,9 +48,9 @@
     "sha256": "ea0569964e3575b5825522c97a6564de6705f07b0e5ee1fba3b8e19ab37c1795"
   },
   "run": {
-    "startedAtUtc": "2026-04-26T15:43:51.1563447Z",
-    "runId": "24956355451",
-    "runAttempt": "1",
-    "repository": "awakecoding/winget-tools"
+    "startedAtUtc": "2026-05-21T14:33:23.3338001Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
   }
 }
