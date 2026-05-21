@@ -53,8 +53,10 @@
     Where to write the JSON summary. Default: <OutDir>\summary.json
 
 .PARAMETER UninstallAfter
-    Run 'winget uninstall' after each successful install. Required in CI to
-    avoid filling the runner's disk.
+    Run 'winget uninstall' after each successful install. Disabled by default
+    because uninstalls frequently trigger UAC prompts or confirmation dialogs
+    that stall headless automation.  With 2 TB of local disk, leaving packages
+    installed is the faster, simpler default.
 
 .PARAMETER PerPackageTimeoutSeconds
     Hard timeout (in seconds) for the install step. Default: 600 (10 min).

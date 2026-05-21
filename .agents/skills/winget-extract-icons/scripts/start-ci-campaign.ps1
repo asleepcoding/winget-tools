@@ -14,7 +14,7 @@ param(
     [string]$CampaignId,
     [switch]$IncludeExisting,
     [switch]$RefreshWingetIndexCache,
-    [bool]$UninstallAfter = $true,
+    [bool]$UninstallAfter = $false,  # disabled by default to avoid UAC/dialogs; keep installs on disk for retry/re-extraction
     [int]$PerPackageTimeout = 900,
     [bool]$AutoCommitResults = $true,
     [switch]$ContinueOnBatchFailure,

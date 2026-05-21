@@ -17,7 +17,7 @@ param(
 
     [string]$WorkflowName = 'extract-icons.yml',
     [string]$Ref = 'master',
-    [bool]$UninstallAfter = $true,
+    [bool]$UninstallAfter = $false,  # disabled by default; uninstalls often trigger UAC/dialogs that block automation, and disk is abundant locally
     [int]$PerPackageTimeout = 900,
     [bool]$AutoCommitResults = $false,
     [switch]$DownloadAndImportArtifacts,
