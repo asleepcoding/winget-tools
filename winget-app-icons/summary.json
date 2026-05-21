@@ -1,5 +1,5 @@
 {
-  "GeneratedAt": "2026-05-21T13:29:30.6563080Z",
+  "GeneratedAt": "2026-05-21T14:31:32.9480963Z",
   "OutDir": "C:\\dev\\winget-tools\\winget-app-icons",
   "WingetVersion": "v1.29.170-preview",
   "ShardIndex": 0,
@@ -14,18 +14,27 @@
   "FailureCategoryCounts": {},
   "Results": [
     {
-      "PackageId": "DavidMoore.IPFilterUpdater",
-      "ResolvedPackageId": "DavidMoore.IPFilterUpdater",
+      "PackageId": "DBBrowserForSQLite.DBBrowserForSQLite",
+      "ResolvedPackageId": "DBBrowserForSQLite.DBBrowserForSQLite",
       "Status": "IconExtracted",
       "FailureCategory": "",
-      "AlreadyInstalled": true,
-      "InstallExitCode": null,
+      "AlreadyInstalled": false,
+      "InstallExitCode": 0,
       "InstallTimedOut": false,
-      "InstallAttemptTag": "",
-      "InstallAttempts": [],
+      "InstallAttemptTag": "install-default",
+      "InstallAttempts": [
+        {
+          "tag": "install-default",
+          "exitCode": 0,
+          "exitHex": "0x00000000",
+          "timedOut": false,
+          "errorName": null,
+          "failureCategory": null
+        }
+      ],
       "InstallStdErr": "",
-      "InstalledByThisRun": false,
-      "InstallSeconds": 0,
+      "InstalledByThisRun": true,
+      "InstallSeconds": 7,
       "ExtractSeconds": 0,
       "ExtractAttemptCount": 1,
       "ExtractAttemptScopes": [
@@ -33,17 +42,48 @@
       ],
       "ExtractFailureCategory": "",
       "IconCount": 1,
-      "IconBytes": 17638.0,
+      "IconBytes": 90022.0,
       "IconFiles": [
-        "IPFilter 3.0.5-beta.DavidMoore.IPFilterUpdater_Microsoft.Winget.Source_8wekyb3d8bbwe.ico"
+        "DB Browser for SQLite.{541AE182-7C1D-426C-8155-4867303B75A4}.ico"
       ],
       "ExtractError": "",
       "UninstallExitCode": null,
       "UninstallTimedOut": false,
       "UninstallSeconds": 0,
-      "DurationSeconds": 0,
-      "StartedAt": "2026-05-21T13:29:30.2214359Z",
-      "CleanupReport": null
+      "DurationSeconds": 8,
+      "StartedAt": "2026-05-21T14:31:24.9111236Z",
+      "CleanupReport": {
+        "Processes": [
+          {
+            "ProcessId": 3172,
+            "Name": "dllhost.exe"
+          }
+        ],
+        "Services": [],
+        "ArpEntries": [
+          {
+            "KeyName": "{541AE182-7C1D-426C-8155-4867303B75A4}",
+            "Hive": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
+            "DisplayName": "DB Browser for SQLite",
+            "Publisher": "DB Browser for SQLite Team",
+            "DisplayVersion": "3.13.1",
+            "InstallDate": "20260521",
+            "InstallLocation": "C:\\Program Files\\DB Browser for SQLite\\"
+          }
+        ],
+        "Shortcuts": [
+          {
+            "Path": "C:\\Users\\Public\\Desktop\\DB Browser (SQLCipher).lnk",
+            "Name": "DB Browser (SQLCipher).lnk"
+          },
+          {
+            "Path": "C:\\Users\\Public\\Desktop\\DB Browser (SQLite).lnk",
+            "Name": "DB Browser (SQLite).lnk"
+          }
+        ],
+        "Autoruns": [],
+        "ScheduledTasks": []
+      }
     }
   ]
 }
