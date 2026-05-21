@@ -16,6 +16,7 @@ Devolutions.UniGetUI
 # --- System Utilities ---
 Microsoft.PowerToys
 Microsoft.Sysinternals
+7zip.7zip
 
 # --- Browsers ---
 Microsoft.Edge
