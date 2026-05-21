@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "ElectronicTeam.Flexihub",
+  "resolvedPackageId": null,
+  "status": "InstallFailed",
+  "hasIcon": false,
+  "firstSeenUtc": "2026-05-21T18:19:54.9383663Z",
+  "lastCheckedUtc": "2026-05-21T18:19:54.9383663Z",
+  "lastUpdatedUtc": null,
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": false,
+  "installSeconds": 6,
+  "extractSeconds": 31,
+  "uninstallSeconds": 0,
+  "durationSeconds": 38,
+  "installExitCode": -1978335215,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": "Install",
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 4,
+  "extractAttemptScopes": [
+    "Both",
+    "User",
+    "Machine",
+    "Both"
+  ],
+  "extractFailureCategory": "ArpNotFound",
+  "iconCount": 0,
+  "iconBytes": 0,
+  "appIconFile": null,
+  "canonicalIconSourceName": null,
+  "canonicalIconBytes": null,
+  "canonicalIconSha256": null,
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335215,
+      "exitHex": "0x8A150011",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335215,
+      "exitHex": "0x8A150011",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": null,
+  "run": {
+    "startedAtUtc": "2026-05-21T18:19:54.9383663Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "packageId": "Eigenmiao.Rickrack",
+  "packageId": "Elgato.WaveLink",
   "resolvedPackageId": null,
   "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-22T04:30:51.7941139Z",
-  "lastCheckedUtc": "2026-05-21T17:56:28.9226448Z",
-  "lastUpdatedUtc": "2026-05-21T17:56:28.9226448Z",
+  "firstSeenUtc": "2026-05-21T18:38:36.1049547Z",
+  "lastCheckedUtc": "2026-05-21T18:38:36.1049547Z",
+  "lastUpdatedUtc": "2026-05-21T18:38:36.1049547Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
   "installerType": null,
   "alreadyInstalled": false,
   "installedByThisRun": true,
-  "installSeconds": 15,
+  "installSeconds": 10,
   "extractSeconds": 0,
-  "uninstallSeconds": 2,
-  "durationSeconds": 18,
+  "uninstallSeconds": 1,
+  "durationSeconds": 13,
   "installExitCode": 0,
   "installTimedOut": false,
   "uninstallExitCode": 0,
@@ -26,12 +26,12 @@
   "extractAttemptCount": 1,
   "extractAttemptScopes": "Both",
   "extractFailureCategory": null,
-  "iconCount": 1,
-  "iconBytes": 9971.0,
-  "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "Rickrack v2.9.10.Rickrack.ico",
+  "iconCount": 2,
+  "iconBytes": 116517.0,
+  "appIconFile": "appx-icon.png",
+  "canonicalIconSourceName": "appx-icon.png",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "ed2337db1301479ce94e6bec313d283b14d612c1110b1bb107b406114cbb324b",
+  "canonicalIconSha256": "f5aa8513582eaeec8fab1176c561623316c30792a43907828b2c74d5bb40a712",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -42,13 +42,20 @@
     "errorName": null,
     "failureCategory": null
   },
-  "icons": {
-    "name": "Rickrack v2.9.10.Rickrack.ico",
-    "bytes": 9971,
-    "sha256": "ed2337db1301479ce94e6bec313d283b14d612c1110b1bb107b406114cbb324b"
-  },
+  "icons": [
+    {
+      "name": "appx-icon.png",
+      "bytes": 20536,
+      "sha256": "f5aa8513582eaeec8fab1176c561623316c30792a43907828b2c74d5bb40a712"
+    },
+    {
+      "name": "app-icon.ico",
+      "bytes": 95981,
+      "sha256": "f40815101c2023498d24404e7c44637c955e6b68b060d1e17d370e6247a7d39a"
+    }
+  ],
   "run": {
-    "startedAtUtc": "2026-05-21T17:56:28.9226448Z",
+    "startedAtUtc": "2026-05-21T18:38:36.1049547Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

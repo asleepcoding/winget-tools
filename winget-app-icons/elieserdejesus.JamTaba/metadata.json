@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "packageId": "Eigenmiao.Rickrack",
+  "packageId": "elieserdejesus.JamTaba",
   "resolvedPackageId": null,
   "status": "HasIcon",
   "hasIcon": true,
-  "firstSeenUtc": "2026-04-22T04:30:51.7941139Z",
-  "lastCheckedUtc": "2026-05-21T17:56:28.9226448Z",
-  "lastUpdatedUtc": "2026-05-21T17:56:28.9226448Z",
+  "firstSeenUtc": "2026-05-21T18:39:32.2822041Z",
+  "lastCheckedUtc": "2026-05-21T18:39:32.2822041Z",
+  "lastUpdatedUtc": "2026-05-21T18:39:32.2822041Z",
   "wingetVersion": "v1.29.170-preview",
   "packageVersion": null,
   "manifestSha": null,
@@ -27,11 +27,11 @@
   "extractAttemptScopes": "Both",
   "extractFailureCategory": null,
   "iconCount": 1,
-  "iconBytes": 9971.0,
+  "iconBytes": 922170.0,
   "appIconFile": "app-icon.ico",
-  "canonicalIconSourceName": "Rickrack v2.9.10.Rickrack.ico",
+  "canonicalIconSourceName": "JamTaba 2 version 1.{ACBD9FA8-0FF5-484F-8BE1-EC577495851E}_is1.ico",
   "canonicalIconBytes": 1,
-  "canonicalIconSha256": "ed2337db1301479ce94e6bec313d283b14d612c1110b1bb107b406114cbb324b",
+  "canonicalIconSha256": "1a1e741b83bef3251ed774cddab4abc56badab98828706858d23b50bacac1cc4",
   "extractError": null,
   "installStdErr": null,
   "installAttempts": {
@@ -43,12 +43,12 @@
     "failureCategory": null
   },
   "icons": {
-    "name": "Rickrack v2.9.10.Rickrack.ico",
-    "bytes": 9971,
-    "sha256": "ed2337db1301479ce94e6bec313d283b14d612c1110b1bb107b406114cbb324b"
+    "name": "JamTaba 2 version 1.{ACBD9FA8-0FF5-484F-8BE1-EC577495851E}_is1.ico",
+    "bytes": 922170,
+    "sha256": "1a1e741b83bef3251ed774cddab4abc56badab98828706858d23b50bacac1cc4"
   },
   "run": {
-    "startedAtUtc": "2026-05-21T17:56:28.9226448Z",
+    "startedAtUtc": "2026-05-21T18:39:32.2822041Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

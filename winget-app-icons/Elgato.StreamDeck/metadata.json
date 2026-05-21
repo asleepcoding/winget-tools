@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "packageId": "Elgato.StreamDeck",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-21T18:38:24.7477445Z",
+  "lastCheckedUtc": "2026-05-21T18:38:24.7477445Z",
+  "lastUpdatedUtc": "2026-05-21T18:38:24.7477445Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 9,
+  "extractSeconds": 0,
+  "uninstallSeconds": 1,
+  "durationSeconds": 11,
+  "installExitCode": -1978334974,
+  "installTimedOut": false,
+  "uninstallExitCode": -1978335212,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 123960.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "Elgato Stream Deck.Elgato.StreamDeck.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "4704046bec835a6c60d9e72beba1ead8d8321a79ebb3b94bd55817ca433218df",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978334974,
+      "exitHex": "0x8A150102",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978334974,
+      "exitHex": "0x8A150102",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "Elgato Stream Deck.Elgato.StreamDeck.ico",
+    "bytes": 123960,
+    "sha256": "4704046bec835a6c60d9e72beba1ead8d8321a79ebb3b94bd55817ca433218df"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-21T18:38:24.7477445Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

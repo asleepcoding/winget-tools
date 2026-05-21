@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "packageId": "Eliot.UEExplorer",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-21T18:40:10.0158137Z",
+  "lastCheckedUtc": "2026-05-21T18:40:10.0158137Z",
+  "lastUpdatedUtc": "2026-05-21T18:40:10.0158137Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 4,
+  "extractSeconds": 0,
+  "uninstallSeconds": 1,
+  "durationSeconds": 6,
+  "installExitCode": -1978335216,
+  "installTimedOut": false,
+  "uninstallExitCode": -1978335212,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 39548.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "UE Explorer.Eliot.UEExplorer.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "ff98bf41bba199cb745ea623ef6fce842a993c4e12042bb703ed2ca757cb340f",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978334974,
+      "exitHex": "0x8A150102",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335216,
+      "exitHex": "0x8A150010",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "UE Explorer.Eliot.UEExplorer.ico",
+    "bytes": 39548,
+    "sha256": "ff98bf41bba199cb745ea623ef6fce842a993c4e12042bb703ed2ca757cb340f"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-21T18:40:10.0158137Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
