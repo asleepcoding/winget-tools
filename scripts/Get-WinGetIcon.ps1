@@ -691,6 +691,28 @@ function Get-TrackedArpFallback {
 # Helpers
 # =============================================================================
 
+function Test-ArpExpected {
+    <#
+    .SYNOPSIS
+        Returns $true if the given InstallerType would normally produce an ARP registry entry.
+        Portable/zip/appx/WSL/pwa/msstore/PS1 installers typically do not write to ARP.
+    #>
+    param([string] $InstallerType)
+
+    if ([string]::IsNullOrWhiteSpace($InstallerType)) {
+        # When the manifest has no explicit InstallerType, winget often falls back
+        # to a traditional EXE / MSI path. We conservatively treat this as ARP-expected.
+        return $true
+    }
+
+    $noArpTypes = @('zip', 'portable', 'appx', 'msix', 'pwa', 'msstore', 'wsl', 'ps1')
+    foreach ($t in $noArpTypes) {
+        if ($InstallerType -ieq $t) {
+            return $false
+        }
+    }
+    return $true
+}
 function Get-PackageHints {
     # Returns a hint object describing how to recognise this package's ARP entry:
     #   ProductCodes : explicit product code(s) declared in the manifest (best signal)
@@ -1494,6 +1516,16 @@ function Get-InstallLocationIconCandidates {
         }
 
         if ($nameKey -match 'unins|uninstall|setup|update|repair|modify') {
+
+        # Web favicons are tiny HTML favicons, not real Windows application icons.
+        # They usually appear in webroot/ or wwwroot/ subdirectories.
+        if ($nameKey -match '\bfav(?:icon)?\b' -or [regex]::IsMatch($_.FullName, '[\\/](?:webroot|wwwroot|htdocs)[\\/]', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+            if ($_.Extension -ieq '.ico') {
+                $tokenScore -= 50   # Strongly deprioritize favicon.ico in web directories
+            } else {
+                $tokenScore -= 10
+            }
+        }
             $tokenScore -= 20
         }
 
@@ -1834,7 +1866,7 @@ function Get-HintOnlyIconCandidates {
     param(
         [Parameter(Mandatory)] [string] $PackageId,
         [Parameter(Mandatory)] $Hints,
-        [Parameter(Mandatory)] [string[]] $SearchTokens,
+        [string[]] $SearchTokens = @(),
         [switch] $DisableHeuristicFallback
     )
 
@@ -1891,31 +1923,44 @@ if (($hints.ProductCodes.Count -eq 0) -and (($hints.Names.Count -eq 0) -or ($hin
 Write-Verbose ("Hints: ProductCodes=[{0}] Names=[{1}] Publishers=[{2}] Version={3}" -f `
     ($hints.ProductCodes -join ', '), ($hints.Names -join ', '), ($hints.Publishers -join ', '), $hints.Version)
 
-$arpMatches = @(Find-ArpEntries -Hints $hints -Scope $Scope)
+$arpExpected = Test-ArpExpected -InstallerType $hints.InstallerType
 $hintOnlyCandidates = @()
-if (-not $arpMatches -or $arpMatches.Count -eq 0) {
-    # -----------------------------------------------------------------
-    # Try tracked-install ARP diff as a last-ditch fallback
-    # -----------------------------------------------------------------
-    if ($TrackingDir) {
-        $trackedEntries = @(Get-TrackedArpFallback -PackageId $PackageId -TrackingDir $TrackingDir)
-        if ($trackedEntries.Count -gt 0) {
-            Write-Verbose ("No live ARP match for '{0}', but found {1} tracked ARP diff entry/ies. Using as fallback." -f $PackageId, $trackedEntries.Count)
-            $arpMatches = $trackedEntries
+
+if ($arpExpected) {
+    $arpMatches = @(Find-ArpEntries -Hints $hints -Scope $Scope)
+    if (-not $arpMatches -or $arpMatches.Count -eq 0) {
+        # -----------------------------------------------------------------
+        # Try tracked-install ARP diff as a last-ditch fallback
+        # -----------------------------------------------------------------
+        if ($TrackingDir) {
+            $trackedEntries = @(Get-TrackedArpFallback -PackageId $PackageId -TrackingDir $TrackingDir)
+            if ($trackedEntries.Count -gt 0) {
+                Write-Verbose ("No live ARP match for '{0}', but found {1} tracked ARP diff entry/ies. Using as fallback." -f $PackageId, $trackedEntries.Count)
+                $arpMatches = $trackedEntries
+            }
+        }
+
+        if (-not $arpMatches -or $arpMatches.Count -eq 0) {
+            $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
+            if ($hintOnlyCandidates.Count -eq 0) {
+                throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
+            }
+
+            Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
         }
     }
-
-    if (-not $arpMatches -or $arpMatches.Count -eq 0) {
-        $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
-        if ($hintOnlyCandidates.Count -eq 0) {
-            throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
-        }
-
-        Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
+    else {
+        Write-Verbose ("ARP matches: {0}" -f $arpMatches.Count)
     }
 }
 else {
-    Write-Verbose ("ARP matches: {0}" -f $arpMatches.Count)
+    Write-Verbose ("InstallerType '$($hints.InstallerType)' does not typically produce ARP entries. Skipping ARP search for '{0}'." -f $PackageId)
+    $arpMatches = @()
+    $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
+    if ($hintOnlyCandidates.Count -eq 0) {
+        throw "No icon candidates found for '$PackageId' (InstallerType '$($hints.InstallerType)' does not register ARP)."
+    }
+    Write-Verbose ("Found {0} hint-only icon candidates for '{1}'." -f $hintOnlyCandidates.Count, $PackageId)
 }
 
 function Select-NewestArpEntry {
@@ -2018,7 +2063,12 @@ foreach ($m in $arpMatches) {
 if ($hintOnlyCandidates.Count -gt 0) {
     $resolvedIcon = Resolve-IconBytesFromCandidates -Candidates $hintOnlyCandidates -MatchId $PackageId
     if (-not $resolvedIcon) {
-        throw "No ARP entries matched in scope '$Scope' for '$PackageId', and hint-only candidates did not produce icon bytes."
+        if ($arpExpected) {
+            throw "No ARP entries matched in scope '$Scope' for '$PackageId', and hint-only candidates did not produce icon bytes."
+        } else {
+            Write-Warning "No icon candidates could be resolved for '$PackageId' (InstallerType '$($hints.InstallerType)' does not register ARP)."
+            return  # Return nothing for non-ARP installers with no resolvable icons -> NoIcon in the orchestrator
+        }
     }
 
     $safeName = ConvertTo-SafeFileName $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })

@@ -301,6 +301,8 @@ function Get-IconExtractionFailureCategory {
 
     if ([string]::IsNullOrWhiteSpace($Message)) { return $null }
     if ($Message -like 'No ARP entries matched*') { return 'ArpNotFound' }
+    if ($Message -like '*does not register ARP*') { return 'InstallerTypeNoArp' }
+    if ($Message -like '*does not produce ARP entries*') { return 'InstallerTypeNoArp' }
     if ($Message -like 'Could not retrieve manifest*') { return 'ManifestUnavailable' }
     if ($Message -like 'Manifest for *provides neither ProductCode*') { return 'UnsupportedPackage' }
     return 'Other'
@@ -1257,12 +1259,19 @@ foreach ($pkg in $todo) {
                     Write-Host ("  Got {0} file(s), {1} bytes." -f $ex.Files.Count, $record.IconBytes) -ForegroundColor Green
                 }
                 elseif ($ex.Error -and (-not $shouldVerifyInstallFailure)) {
-                    $record.Status = 'ExtractError'
-                    if (-not $record.FailureCategory) {
-                        $record.FailureCategory = 'Extraction'
+                    $failureCategory = Get-IconExtractionFailureCategory -Message $ex.Error
+                    if ($failureCategory -eq 'InstallerTypeNoArp') {
+                        $record.Status = 'NoIcon'
+                        $record.ExtractFailureCategory = 'InstallerTypeNoArp'
+                        Write-Warning "  No ARP expected for this installer type; no icon candidates found."
+                    } else {
+                        $record.Status = 'ExtractError'
+                        if (-not $record.FailureCategory) {
+                            $record.FailureCategory = 'Extraction'
+                        }
+                        $record.ExtractError = ($ex.Error.Substring(0, [Math]::Min(512, $ex.Error.Length)))
+                        Write-Warning "  Extractor threw: $($ex.Error)"
                     }
-                    $record.ExtractError = ($ex.Error.Substring(0, [Math]::Min(512, $ex.Error.Length)))
-                    Write-Warning "  Extractor threw: $($ex.Error)"
                 }
                 elseif (-not $shouldVerifyInstallFailure) {
                     $record.Status = 'NoIcon'
