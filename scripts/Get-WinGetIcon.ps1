@@ -1518,7 +1518,10 @@ function Get-InstallLocationIconCandidates {
             $tokenScore += 10
         }
 
+        # Deprioritize installer helper exes (unins000.exe, setup.exe, etc.)
         if ($nameKey -match 'unins|uninstall|setup|update|repair|modify') {
+            $tokenScore -= 20
+        }
 
         # Web favicons are tiny HTML favicons, not real Windows application icons.
         # They usually appear in webroot/ or wwwroot/ subdirectories.
@@ -1528,8 +1531,6 @@ function Get-InstallLocationIconCandidates {
             } else {
                 $tokenScore -= 10
             }
-        }
-            $tokenScore -= 20
         }
 
         [pscustomobject]@{
