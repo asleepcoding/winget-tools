@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "packageId": "Flexense.DiskSavvyEnterprise",
+  "resolvedPackageId": null,
+  "status": "InstallFailed",
+  "hasIcon": false,
+  "firstSeenUtc": "2026-05-22T20:04:19.4236528Z",
+  "lastCheckedUtc": "2026-05-22T20:04:19.4236528Z",
+  "lastUpdatedUtc": null,
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": false,
+  "installSeconds": 42,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 43,
+  "installExitCode": -1978335216,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": "Install",
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 0,
+  "extractAttemptScopes": null,
+  "extractFailureCategory": "Other",
+  "iconCount": 0,
+  "iconBytes": 0,
+  "appIconFile": null,
+  "canonicalIconSourceName": null,
+  "canonicalIconBytes": null,
+  "canonicalIconSha256": null,
+  "sourceReason": null,
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335215,
+      "exitHex": "0x8A150011",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335216,
+      "exitHex": "0x8A150010",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": null,
+  "run": {
+    "startedAtUtc": "2026-05-22T20:04:19.4236528Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

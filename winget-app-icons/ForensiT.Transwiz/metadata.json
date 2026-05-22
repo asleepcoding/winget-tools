@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "packageId": "ForensiT.Transwiz",
+  "resolvedPackageId": null,
+  "status": "ExtractError",
+  "hasIcon": false,
+  "firstSeenUtc": "2026-05-22T20:13:49.3321080Z",
+  "lastCheckedUtc": "2026-05-22T20:13:49.3321080Z",
+  "lastUpdatedUtc": null,
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": true,
+  "installedByThisRun": false,
+  "installSeconds": 5,
+  "extractSeconds": 6,
+  "uninstallSeconds": 0,
+  "durationSeconds": 11,
+  "installExitCode": -1978335189,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": "Extraction",
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": "Other",
+  "iconCount": 0,
+  "iconBytes": 0,
+  "appIconFile": null,
+  "canonicalIconSourceName": null,
+  "canonicalIconBytes": null,
+  "canonicalIconSha256": null,
+  "sourceReason": null,
+  "extractError": "The variable '$sourceReason' cannot be retrieved because it has not been set.; Script=C:\\dev\\winget-tools\\scripts\\Invoke-BulkIconExtraction.ps1:347; Line=$result = Invoke-IconExtraction -PackageId $PackageId -PkgOutDir $PkgOutDir -Scope $attempt.Scope -RefreshManifest:$attempt.RefreshManifest -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir; Stack=at Invoke-IconExtraction, C:\\dev\\winget-tools\\scripts\\Invoke-BulkIconExtraction.ps1: line 253 | at Invoke-IconExtractio",
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": null,
+  "run": {
+    "startedAtUtc": "2026-05-22T20:13:49.3321080Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "Flexense.DiskSorterPro",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-22T20:05:42.6197685Z",
+  "lastCheckedUtc": "2026-05-22T20:05:42.6197685Z",
+  "lastUpdatedUtc": "2026-05-22T20:05:42.6197685Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": true,
+  "installedByThisRun": false,
+  "installSeconds": 5,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 6,
+  "installExitCode": -1978335189,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 15086.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "DiskSorter Pro.Flexense.DiskSorterPro.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "331cac5573ac28cf6d1e131ed4787ef732b248d82079c8468581f3ea91dbebb0",
+  "sourceReason": "CommonInstallLocation",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "DiskSorter Pro.Flexense.DiskSorterPro.ico",
+    "bytes": 15086,
+    "sha256": "331cac5573ac28cf6d1e131ed4787ef732b248d82079c8468581f3ea91dbebb0"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-22T20:05:42.6197685Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

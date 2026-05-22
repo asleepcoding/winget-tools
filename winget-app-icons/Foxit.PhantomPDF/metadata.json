@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "packageId": "Foxit.PhantomPDF",
+  "resolvedPackageId": null,
+  "status": "InstallFailed",
+  "hasIcon": false,
+  "firstSeenUtc": "2026-05-22T19:19:52.5903350Z",
+  "lastCheckedUtc": "2026-05-22T19:19:52.5903350Z",
+  "lastUpdatedUtc": null,
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": false,
+  "installSeconds": 490,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 496,
+  "installExitCode": -2147012894,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": "Install",
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 0,
+  "extractAttemptScopes": null,
+  "extractFailureCategory": "Other",
+  "iconCount": 0,
+  "iconBytes": 0,
+  "appIconFile": null,
+  "canonicalIconSourceName": null,
+  "canonicalIconBytes": null,
+  "canonicalIconSha256": null,
+  "sourceReason": null,
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -2147012894,
+      "exitHex": "0x80072EE2",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -2147012894,
+      "exitHex": "0x80072EE2",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": null,
+  "run": {
+    "startedAtUtc": "2026-05-22T19:19:52.5903350Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

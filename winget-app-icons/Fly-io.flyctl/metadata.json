@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "Fly-io.flyctl",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-22T20:08:00.9991025Z",
+  "lastCheckedUtc": "2026-05-22T20:08:00.9991025Z",
+  "lastUpdatedUtc": "2026-05-22T20:08:00.9991025Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 7,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 10,
+  "installExitCode": 0,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 766.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "flyctl.Fly-io.flyctl.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "781ca71e671b56997130d573a6957ee1c3e02fca5bfac2ffcf8552e0575cc253",
+  "sourceReason": "WinGetPackageRoot",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": 0,
+      "exitHex": "0x00000000",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": null
+    }
+  ],
+  "icons": {
+    "name": "flyctl.Fly-io.flyctl.ico",
+    "bytes": 766,
+    "sha256": "781ca71e671b56997130d573a6957ee1c3e02fca5bfac2ffcf8552e0575cc253"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-22T20:08:00.9991025Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

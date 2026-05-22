@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "packageId": "Flexense.DiskBoss",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-22T20:01:46.3800157Z",
+  "lastCheckedUtc": "2026-05-22T20:01:46.3800157Z",
+  "lastUpdatedUtc": "2026-05-22T20:01:46.3800157Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": true,
+  "installedByThisRun": false,
+  "installSeconds": 0,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 1,
+  "installExitCode": null,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": null,
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 2,
+  "iconBytes": 30172.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "DiskBoss 16.0.12.DiskBoss.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "84fadd2fe6020c5e87b2e7ec43128fa622b3103c988abbed3ba9d3c4a89f1326",
+  "sourceReason": null,
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": null,
+  "icons": [
+    {
+      "name": "DiskBoss 16.0.12.DiskBoss.ico",
+      "bytes": 15086,
+      "sha256": "84fadd2fe6020c5e87b2e7ec43128fa622b3103c988abbed3ba9d3c4a89f1326"
+    },
+    {
+      "name": "DiskBoss Ultimate 16.0.12.DiskBoss Ultimate.ico",
+      "bytes": 15086,
+      "sha256": "84fadd2fe6020c5e87b2e7ec43128fa622b3103c988abbed3ba9d3c4a89f1326"
+    }
+  ],
+  "run": {
+    "startedAtUtc": "2026-05-22T20:01:46.3800157Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
