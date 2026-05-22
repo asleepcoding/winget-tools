@@ -125,8 +125,13 @@ process {
 
         if ($installOk) {
             $tempOutDir = Join-Path $env:TEMP ('winget-icon-{0}' -f [guid]::NewGuid().ToString('N'))
+            $sourceReason = ''
             try {
-                $null = & $iconScript -PackageId $pkg -OutDir $tempOutDir -Scope 'Both' -Force -DisableHeuristicFallback 2>&1
+                $rawOutput = & $iconScript -PackageId $pkg -OutDir $tempOutDir -Scope 'Both' -Force -DisableHeuristicFallback 2>$null
+                $firstObj = $rawOutput | Where-Object { $_ -is [PSCustomObject] -and $_.PackageId -eq $pkg } | Select-Object -First 1
+                if ($firstObj -and $firstObj.SourceReason) {
+                    $sourceReason = $firstObj.SourceReason
+                }
                 $extractedFiles = @(Get-ChildItem -LiteralPath $tempOutDir -File -Include '*.ico', '*.png' -ErrorAction SilentlyContinue)
                 if ($extractedFiles.Count -gt 0) {
                     # Prefer PNG (MSIX), otherwise largest ICO
@@ -191,6 +196,7 @@ process {
             canonicalIconBytes      = if ($hasIcon) { $iconBytes } else { $null }
             canonicalIconSha256     = $iconSha
             extractError            = $extractError
+            sourceReason            = if ($sourceReason) { $sourceReason } else { $null }
             installStdErr           = if ($tracked.InstallResult -eq 'failed' -and $tracked.Error) { $tracked.Error } else { $null }
             installAttempts         = if ($null -ne $tracked.InstallExitCode) {
                 @([pscustomobject]@{

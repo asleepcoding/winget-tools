@@ -73,7 +73,10 @@ param(
     [switch] $DisableHeuristicFallback,
 
     [Parameter(HelpMessage = 'Path to tracked-install JSON snapshots. When ARP matching fails, uses the per-package diffs.Arp entries from tracking.json as a last-ditch fallback.')]
-    [string] $TrackingDir
+    [string] $TrackingDir,
+
+    [Parameter(HelpMessage = 'Disable URL-based icon fallback (manifest URLs -> GitHub repo icons / website favicons).')]
+    [switch] $DisableUrlFallback
 )
 
 Set-StrictMode -Version Latest
@@ -1943,10 +1946,14 @@ if ($arpExpected) {
         if (-not $arpMatches -or $arpMatches.Count -eq 0) {
             $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
             if ($hintOnlyCandidates.Count -eq 0) {
-                throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
+                if ($DisableUrlFallback) {
+                    throw "No ARP entries matched in scope '$Scope' for '$PackageId'. Is the package actually installed?"
+                }
+                Write-Verbose ("No ARP match and no hint-only candidates for '{0}'. Proceeding to URL fallback." -f $PackageId)
             }
-
-            Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
+            else {
+                Write-Verbose ("No ARP match for '{0}', but found {1} hint-only icon candidates." -f $PackageId, $hintOnlyCandidates.Count)
+            }
         }
     }
     else {
@@ -1958,9 +1965,10 @@ else {
     $arpMatches = @()
     $hintOnlyCandidates = @(Get-HintOnlyIconCandidates -PackageId $PackageId -Hints $hints -SearchTokens $searchTokens -DisableHeuristicFallback:$DisableHeuristicFallback)
     if ($hintOnlyCandidates.Count -eq 0) {
-        throw "No icon candidates found for '$PackageId' (InstallerType '$($hints.InstallerType)' does not register ARP)."
+        Write-Verbose ("No local icon candidates for '{0}' (InstallerType '$($hints.InstallerType)' does not register ARP). Proceeding to URL fallback." -f $PackageId)
+    } else {
+        Write-Verbose ("Found {0} hint-only icon candidates for '{1}'." -f $hintOnlyCandidates.Count, $PackageId)
     }
-    Write-Verbose ("Found {0} hint-only icon candidates for '{1}'." -f $hintOnlyCandidates.Count, $PackageId)
 }
 
 function Select-NewestArpEntry {
@@ -2060,35 +2068,81 @@ foreach ($m in $arpMatches) {
 }
 }
 
+$localResolved = $null
+
 if ($hintOnlyCandidates.Count -gt 0) {
-    $resolvedIcon = Resolve-IconBytesFromCandidates -Candidates $hintOnlyCandidates -MatchId $PackageId
-    if (-not $resolvedIcon) {
+    $localResolved = Resolve-IconBytesFromCandidates -Candidates $hintOnlyCandidates -MatchId $PackageId
+    if ($localResolved) {
+        $safeName = ConvertTo-SafeFileName $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })
+        $outFile = Join-Path $OutDir ("{0}.{1}.ico" -f $safeName, (ConvertTo-SafeFileName $PackageId))
+        [IO.File]::WriteAllBytes($outFile, $localResolved.Bytes)
+
+        [pscustomobject]@{
+            PackageId      = $PackageId
+            ProductCode    = ''
+            DisplayName    = $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })
+            Publisher      = $(if ($hints.Publishers.Count -gt 0) { $hints.Publishers[0] } else { '' })
+            DisplayVersion = $hints.Version
+            InstallDate    = ''
+            LastWriteTime  = $null
+            Hive           = ''
+            MatchKind      = 'HintOnly'
+            Source         = $localResolved.IconPath
+            IconIndex      = $localResolved.IconIndex
+            IconPath       = $outFile
+            SizeBytes      = $localResolved.Bytes.Length
+            SourceReason   = $localResolved.Reason
+        }
+    } else {
         if ($arpExpected) {
             throw "No ARP entries matched in scope '$Scope' for '$PackageId', and hint-only candidates did not produce icon bytes."
-        } else {
-            Write-Warning "No icon candidates could be resolved for '$PackageId' (InstallerType '$($hints.InstallerType)' does not register ARP)."
-            return  # Return nothing for non-ARP installers with no resolvable icons -> NoIcon in the orchestrator
+        }
+        Write-Warning ("No icon candidates could be resolved for '{0}', trying URL fallback..." -f $PackageId)
+    }
+}
+
+# =============================================================================
+# URL-based icon fallback (manifest URLs -> GitHub repo icons / website favicons)
+# =============================================================================
+$hasLocalOutput = ($arpMatches.Count -gt 0) -or ($localResolved -and $localResolved.Bytes.Length -gt 0)
+
+if (-not $hasLocalOutput -and -not $DisableUrlFallback) {
+    $urlHelper = Join-Path $PSScriptRoot 'Get-WinGetIcon-Urls.ps1'
+    if (Test-Path -LiteralPath $urlHelper) {
+        . $urlHelper
+        $webCandidates = [object[]](Get-WebIconCandidates -PackageId $PackageId -Hints $hints)
+        if ($webCandidates.Count -gt 0) {
+            Write-Verbose ('URL fallback: {0} candidates for {1}' -f $webCandidates.Count, $PackageId)
+            foreach ($cand in $webCandidates) {
+                $resolved = Resolve-IconFromUrl -Url $cand.Path -OutDir $OutDir
+                if ($resolved -and $resolved.Bytes -and $resolved.Bytes.Length -gt 0) {
+                    $outFile = $resolved.IconPath
+                    if (-not $outFile -or -not (Test-Path -LiteralPath $outFile)) {
+                        $outFile = Join-Path $OutDir ('{0}.url.ico' -f (ConvertTo-SafeFileName $PackageId))
+                        [IO.File]::WriteAllBytes($outFile, $resolved.Bytes)
+                    }
+                    [pscustomobject]@{
+                        PackageId      = $PackageId
+                        ProductCode    = ''
+                        DisplayName    = $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })
+                        Publisher      = $(if ($hints.Publishers.Count -gt 0) { $hints.Publishers[0] } else { '' })
+                        DisplayVersion = $hints.Version
+                        InstallDate    = ''
+                        LastWriteTime  = $null
+                        Hive           = ''
+                        MatchKind      = 'UrlFallback'
+                        Source         = $cand.Path
+                        IconIndex      = 0
+                        IconPath       = $outFile
+                        SizeBytes      = $resolved.Bytes.Length
+                        SourceReason   = $resolved.Reason
+                    }
+                    return
+                }
+            }
         }
     }
-
-    $safeName = ConvertTo-SafeFileName $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })
-    $outFile = Join-Path $OutDir ("{0}.{1}.ico" -f $safeName, (ConvertTo-SafeFileName $PackageId))
-    [IO.File]::WriteAllBytes($outFile, $resolvedIcon.Bytes)
-
-    [pscustomobject]@{
-        PackageId      = $PackageId
-        ProductCode    = ''
-        DisplayName    = $(if ($hints.Names.Count -gt 0) { $hints.Names[0] } else { $PackageId })
-        Publisher      = $(if ($hints.Publishers.Count -gt 0) { $hints.Publishers[0] } else { '' })
-        DisplayVersion = $hints.Version
-        InstallDate    = ''
-        LastWriteTime  = $null
-        Hive           = ''
-        MatchKind      = 'HintOnly'
-        Source         = $resolvedIcon.IconPath
-        IconIndex      = $resolvedIcon.IconIndex
-        IconPath       = $outFile
-        SizeBytes      = $resolvedIcon.Bytes.Length
-        SourceReason   = $resolvedIcon.Reason
+    if (-not $arpExpected) {
+        Write-Warning "No icon candidates could be resolved for '$PackageId' (InstallerType '$($hints.InstallerType)' does not register ARP, and URL fallback found nothing)."
     }
 }

@@ -239,13 +239,18 @@ function Invoke-IconExtraction {
     }
 
     try {
-        $null = & $script:iconScript -PackageId $PackageId -OutDir $PkgOutDir -Scope $Scope -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir 2>&1
+        $rawOutput = & $script:iconScript -PackageId $PackageId -OutDir $PkgOutDir -Scope $Scope -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir 2>$null
+        $sourceReason = ''
+        $firstObj = $rawOutput | Where-Object { $_ -is [PSCustomObject] -and $_.PackageId -eq $PackageId } | Select-Object -First 1
+        if ($firstObj -and $firstObj.SourceReason) {
+            $sourceReason = $firstObj.SourceReason
+        }
     }
     catch {
         $err = Format-ExceptionDetails -ErrorRecord $_
     }
     $files = @(Get-ExtractedIconFiles -PkgOutDir $PkgOutDir)
-    return [pscustomobject]@{ Files = $files; Error = $err; Scope = $Scope }
+    return [pscustomobject]@{ Files = $files; Error = $err; Scope = $Scope; SourceReason = $sourceReason }
 }
 
 function Get-ExtractedIconFiles {
@@ -362,6 +367,7 @@ function Invoke-IconExtractionWithRetry {
                     Error           = $result.Error
                     Scope           = $result.Scope
                     FailureCategory = $attemptFailureCategory
+                    SourceReason    = $result.SourceReason
                     Attempts        = $successAttempts
                 }
             }
@@ -379,11 +385,13 @@ function Invoke-IconExtractionWithRetry {
         $finalError = ''
         $finalScope = 'Both'
         $finalFailureCategory = $null
+        $finalSourceReason = ''
         if ($last) {
             $finalFiles = $last.Files
             $finalError = $last.Error
             $finalScope = $last.Scope
             $finalFailureCategory = Get-IconExtractionFailureCategory -Message $last.Error
+            $finalSourceReason = $last.SourceReason
         }
 
         $finalAttempts = @($attemptRecords.ToArray())
@@ -393,6 +401,7 @@ function Invoke-IconExtractionWithRetry {
             Error           = $finalError
             Scope           = $finalScope
             FailureCategory = $finalFailureCategory
+            SourceReason    = $finalSourceReason
             Attempts        = $finalAttempts
         }
     }
@@ -1057,6 +1066,7 @@ function Write-PackageState {
         canonicalIconSourceName = if ($canonicalIcon) { $canonicalIcon.Name } else { $null }
         canonicalIconBytes      = if ($canonicalIcon) { $canonicalIcon.Length } else { $null }
         canonicalIconSha256     = if ($hasIcon) { Get-FileSha256 -Path $canonicalIconPath } else { $null }
+        sourceReason            = if ($Record.SourceReason) { $Record.SourceReason } else { $null }
         extractError            = if ($Record.ExtractError) { $Record.ExtractError } else { $null }
         installStdErr           = if ($Record.InstallStdErr) { $Record.InstallStdErr } else { $null }
         installAttempts         = if ($Record.InstallAttempts.Count -gt 0) { @($Record.InstallAttempts) } else { $null }
@@ -1128,6 +1138,7 @@ foreach ($pkg in $todo) {
         ExtractAttemptCount = 0
         ExtractAttemptScopes = @()
         ExtractFailureCategory = ''
+        SourceReason       = ''
         IconCount          = 0
         IconBytes          = 0
         IconFiles          = @()
@@ -1251,6 +1262,7 @@ foreach ($pkg in $todo) {
                     $record.IconCount = $ex.Files.Count
                     $record.IconBytes = ($ex.Files | Measure-Object Length -Sum).Sum
                     $record.IconFiles = @($ex.Files | ForEach-Object { $_.Name })
+                    $record.SourceReason = if ($ex.SourceReason) { $ex.SourceReason } else { '' }
                     $record.Status = 'IconExtracted'
                     if ($shouldVerifyInstallFailure) {
                         $record.InstalledByThisRun = $true
