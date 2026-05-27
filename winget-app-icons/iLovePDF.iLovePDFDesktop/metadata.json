@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "packageId": "iLovePDF.iLovePDFDesktop",
+  "resolvedPackageId": null,
+  "status": "InstallFailed",
+  "hasIcon": false,
+  "firstSeenUtc": "2026-05-27T17:49:32.2279053Z",
+  "lastCheckedUtc": "2026-05-27T17:49:32.2279053Z",
+  "lastUpdatedUtc": null,
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": false,
+  "installSeconds": 10,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 11,
+  "installExitCode": -2145844845,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": "Install",
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 0,
+  "extractAttemptScopes": null,
+  "extractFailureCategory": "Other",
+  "iconCount": 0,
+  "iconBytes": 0,
+  "appIconFile": null,
+  "canonicalIconSourceName": null,
+  "canonicalIconBytes": null,
+  "canonicalIconSha256": null,
+  "sourceReason": null,
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -2145844845,
+      "exitHex": "0x80190193",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -2145844845,
+      "exitHex": "0x80190193",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": null,
+  "run": {
+    "startedAtUtc": "2026-05-27T17:49:32.2279053Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

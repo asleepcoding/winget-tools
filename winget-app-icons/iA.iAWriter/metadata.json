@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "iA.iAWriter",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-27T17:28:14.6597827Z",
+  "lastCheckedUtc": "2026-05-27T17:28:14.6597827Z",
+  "lastUpdatedUtc": "2026-05-27T17:28:14.6597827Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 36,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 37,
+  "installExitCode": -1978335226,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 132582.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "iA Writer.iA.iAWriter.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "774579d1dbd04c0508e0202f1fd8ef471c07d14ffbabaa3d9c37e8b8bbaae9e3",
+  "sourceReason": "CommonInstallLocation",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335226,
+      "exitHex": "0x8A150006",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335226,
+      "exitHex": "0x8A150006",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "iA Writer.iA.iAWriter.ico",
+    "bytes": 132582,
+    "sha256": "774579d1dbd04c0508e0202f1fd8ef471c07d14ffbabaa3d9c37e8b8bbaae9e3"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-27T17:28:14.6597827Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
