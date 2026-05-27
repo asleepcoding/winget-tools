@@ -2,11 +2,11 @@
   "schema": 1,
   "packageId": "Aardappel.Cube",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T20:58:43.0356287Z",
-  "lastCheckedUtc": "2026-05-20T00:18:07.0454630Z",
-  "lastUpdatedUtc": "2026-05-20T00:18:07.0454630Z",
+  "lastCheckedUtc": "2026-05-20T00:18:07.045463Z",
+  "lastUpdatedUtc": "2026-05-20T00:18:07.045463Z",
   "wingetVersion": "pinget v0.4.2",
   "packageVersion": null,
   "manifestSha": null,
@@ -41,7 +41,7 @@
     "sha256": "a1326a5732a2411abd2cb537599cbeeb22f477ffefa0dfb01b30c8f94298ae4a"
   },
   "run": {
-    "startedAtUtc": "2026-05-20T00:18:07.0454630Z",
+    "startedAtUtc": "2026-05-20T00:18:07.045463Z",
     "runId": null,
     "runAttempt": null,
     "repository": null

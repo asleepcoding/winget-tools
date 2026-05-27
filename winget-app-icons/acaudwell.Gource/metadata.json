@@ -2,7 +2,7 @@
   "schema": 1,
   "packageId": "acaudwell.Gource",
   "resolvedPackageId": null,
-  "status": "HasIcon",
+  "status": "NoIcon",
   "hasIcon": true,
   "firstSeenUtc": "2026-04-24T21:15:09.7041425Z",
   "lastCheckedUtc": "2026-05-20T00:21:10.8106439Z",
