@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "Google.Chrome.Beta.EXE",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-27T14:15:33.9506836Z",
+  "lastCheckedUtc": "2026-05-27T14:15:33.9506836Z",
+  "lastUpdatedUtc": "2026-05-27T14:15:33.9506836Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 87,
+  "extractSeconds": 2,
+  "uninstallSeconds": 0,
+  "durationSeconds": 97,
+  "installExitCode": 0,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 10134.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "Google Chrome Beta (EXE).Google.Chrome.Beta.EXE.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "0ffc598deefa457344c9db196470a9aa01834179f2670ffb0bf4166f9a8a3f05",
+  "sourceReason": "CommonInstallLocation",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978334963,
+      "exitHex": "0x8A15010D",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": 0,
+      "exitHex": "0x00000000",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": null
+    }
+  ],
+  "icons": {
+    "name": "Google Chrome Beta (EXE).Google.Chrome.Beta.EXE.ico",
+    "bytes": 10134,
+    "sha256": "0ffc598deefa457344c9db196470a9aa01834179f2670ffb0bf4166f9a8a3f05"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-27T14:15:33.9506836Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
