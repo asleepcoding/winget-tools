@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "GarboMuffin.TurboWarp",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-22T20:29:03.7929052Z",
+  "lastCheckedUtc": "2026-05-22T20:29:03.7929052Z",
+  "lastUpdatedUtc": "2026-05-22T20:29:03.7929052Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 29,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 30,
+  "installExitCode": 0,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 112857.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "TurboWarp 1.15.5.77879e2d-bab0-5584-af53-a7530d9aa5de.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "5d0a47437632ca6d7ab95f2f7b145d48dfcc324444d6551ef695b8a8e00cfe41",
+  "sourceReason": "DisplayIcon",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335226,
+      "exitHex": "0x8A150006",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": 0,
+      "exitHex": "0x00000000",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": null
+    }
+  ],
+  "icons": {
+    "name": "TurboWarp 1.15.5.77879e2d-bab0-5584-af53-a7530d9aa5de.ico",
+    "bytes": 112857,
+    "sha256": "5d0a47437632ca6d7ab95f2f7b145d48dfcc324444d6551ef695b8a8e00cfe41"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-22T20:29:03.7929052Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
