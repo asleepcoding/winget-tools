@@ -95,9 +95,13 @@ function Get-WebIconCandidates {
     }
 
     # --- Website favicon probing ---
+    # Exclude any github.com URL — not just repo URLs. A PublisherUrl like
+    # https://github.com/protocolbuffers would otherwise resolve to
+    # https://github.com/favicon.ico, which is GitHub's platform favicon
+    # (not the project's icon).
     $websiteRoots = @()
     foreach ($url in $urls) {
-        if (-not (Get-GitHubRepoFromUrl -Url $url)) {
+        if ($url -notmatch 'github\.com') {
             try {
                 $uri = [System.Uri]$url
                 $root = "{0}://{1}" -f $uri.Scheme, $uri.Host
@@ -168,7 +172,12 @@ function Resolve-IconFromUrl {
                 'A1326A5732A2411ABD2CB537599CBEEB22F477FFEFA0DFB01B30C8F94298AE4A',
                 '9994932095864A4259B5C966ABE8097761BE39717F8CC349B9C4F43254388981',
                 '7DFAA91B018C4C330F2AD3DE8C181E69C0A2A2E244A6C0F89A53D3BA0E301A1C',
-                '5037C877CB134C1CD303367CFCC2AFECB0517522FF8AD98544D4EB158DDC6BDA'
+                '5037C877CB134C1CD303367CFCC2AFECB0517522FF8AD98544D4EB158DDC6BDA',
+                '5F978BBDD8DE73A5FD82C179C66836E495155B23C2EB191646587DF7283ECF7E',
+                'BA82BB5D90262417A18CEC6631BBD8B880020EB159B45F264A9145196DFB8F3A',
+                '48498BF6CEE860BC17E00A4426A0B7A9633B264A74E89FA288668A8E69C02ADE',
+                '7497012257CC9492C6FC705EC94F75AF7D2566BAC18293695C7ECA957FD90FCE',
+                '0FFC598DEEFA457344C9DB196470A9AA01834179F2670FFB0BF4166F9A8A3F05'
             )
             $sha = [System.Security.Cryptography.SHA256]::Create()
             $hashHex = [BitConverter]::ToString($sha.ComputeHash($bytes)) -replace '-',''
@@ -177,6 +186,26 @@ function Resolve-IconFromUrl {
             if ($genericIconSha256 -contains $hashHex) {
                 Write-Verbose ("[URL] Rejected generic icon from {0}" -f $Url)
                 return $null
+            }
+
+            # Reject ICOs whose largest frame is smaller than 32 px.
+            # Favicons are typically 16x16 or 32x32 and unsuitable as app icons.
+            if ($bytes.Length -ge 6) {
+                $icoCount = [BitConverter]::ToUInt16($bytes, 4)
+                $icoMaxDim = 0
+                for ($icoIdx = 0; $icoIdx -lt $icoCount; $icoIdx++) {
+                    $icoEntry = 6 + ($icoIdx * 16)
+                    $icoW = $bytes[$icoEntry + 0]
+                    $icoH = $bytes[$icoEntry + 1]
+                    $icoWidth = if ($icoW -eq 0) { 256 } else { [int]$icoW }
+                    $icoHeight = if ($icoH -eq 0) { 256 } else { [int]$icoH }
+                    if ($icoWidth -gt $icoMaxDim) { $icoMaxDim = $icoWidth }
+                    if ($icoHeight -gt $icoMaxDim) { $icoMaxDim = $icoHeight }
+                }
+                if ($icoMaxDim -lt 32) {
+                    Write-Verbose ("[URL] Rejected small icon ({0}px max frame) from {1}" -f $icoMaxDim, $Url)
+                    return $null
+                }
             }
 
             if ($OutDir) {

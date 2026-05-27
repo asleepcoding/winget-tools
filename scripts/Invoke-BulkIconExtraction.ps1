@@ -26,11 +26,15 @@
       Installed         - install completed (exit code 0)
       InstallFailed     - install exited non-zero
       InstallTimeout    - install exceeded -PerPackageTimeoutSeconds
-    IconExtracted     - extractor produced at least one icon file
+      IconExtracted     - extractor produced at least one icon file
       NoIcon            - extractor ran but produced 0 files (e.g., MSI with no
                           ProductIcon, or DisplayIcon pointed at a missing file)
       ExtractError      - extractor threw an exception
       Skipped           - blank/comment line in the input file
+
+    For MSIX/APPX packages, Get-WinGetIcon.ps1 produces both appx-icon.png and
+    app-icon.ico (multi-resolution). The pipeline prefers ICO over PNG so the
+    canonical output is always app-icon.ico.
 
 .PARAMETER Packages
     Inline list of WinGet PackageIds. Mutually exclusive with -PackageListFile.
@@ -238,9 +242,9 @@ function Invoke-IconExtraction {
         }
     }
 
+    $sourceReason = ''
     try {
         $rawOutput = & $script:iconScript -PackageId $PackageId -OutDir $PkgOutDir -Scope $Scope -Force:$Force -DisableHeuristicFallback:$DisableHeuristicFallback -TrackingDir $TrackingDir 2>$null
-        $sourceReason = ''
         $firstObj = $rawOutput | Where-Object { $_ -is [PSCustomObject] -and $_.PackageId -eq $PackageId } | Select-Object -First 1
         if ($firstObj -and $firstObj.SourceReason) {
             $sourceReason = $firstObj.SourceReason
@@ -1010,9 +1014,10 @@ function Write-PackageState {
         $currentIcons = @(Get-ExtractedIconFiles -PkgOutDir $PkgOutDir)
     }
 
-    $canonicalIcon = @($currentIcons | Where-Object { $_.Name -ieq 'appx-icon.png' } | Select-Object -First 1)
+    # Prefer ICO over PNG — if Get-WinGetIcon produced a multi-image ICO, use it.
+    $canonicalIcon = @($currentIcons | Where-Object { $_.Extension -ieq '.ico' } | Sort-Object -Property @{ Expression = 'Length'; Descending = $true }, @{ Expression = 'Name'; Descending = $false } | Select-Object -First 1)
     if (-not $canonicalIcon) {
-        $canonicalIcon = @($currentIcons | Where-Object { $_.Extension -ieq '.ico' } | Sort-Object -Property @{ Expression = 'Length'; Descending = $true }, @{ Expression = 'Name'; Descending = $false } | Select-Object -First 1)
+        $canonicalIcon = @($currentIcons | Where-Object { $_.Name -ieq 'appx-icon.png' } | Select-Object -First 1)
     }
     $canonicalIconPath = if ($canonicalIcon -and $canonicalIcon.Extension -ieq '.png') { $canonicalAppxPath } else { $canonicalIcoPath }
     if ($canonicalIcon) {
