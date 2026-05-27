@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "packageId": "Guru3D.RTSS",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-27T15:59:09.1873149Z",
+  "lastCheckedUtc": "2026-05-27T15:59:09.1873149Z",
+  "lastUpdatedUtc": "2026-05-27T15:59:09.1873149Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": true,
+  "installedByThisRun": false,
+  "installSeconds": 8,
+  "extractSeconds": 0,
+  "uninstallSeconds": 0,
+  "durationSeconds": 11,
+  "installExitCode": -1978335189,
+  "installTimedOut": false,
+  "uninstallExitCode": null,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-machine",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 1,
+  "iconBytes": 34494.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "Rivatuner Statistics Server.Guru3D.RTSS.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "774d054c39a34f2cabb9629bd82935ae070fae8c0c0558b48c8878668ecd6a25",
+  "sourceReason": "CommonInstallLocation",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": [
+    {
+      "tag": "install-default",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    },
+    {
+      "tag": "install-machine",
+      "exitCode": -1978335189,
+      "exitHex": "0x8A15002B",
+      "timedOut": false,
+      "errorName": null,
+      "failureCategory": "Install"
+    }
+  ],
+  "icons": {
+    "name": "Rivatuner Statistics Server.Guru3D.RTSS.ico",
+    "bytes": 34494,
+    "sha256": "774d054c39a34f2cabb9629bd82935ae070fae8c0c0558b48c8878668ecd6a25"
+  },
+  "run": {
+    "startedAtUtc": "2026-05-27T15:59:09.1873149Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}

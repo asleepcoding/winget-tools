@@ -28,7 +28,7 @@
   "extractFailureCategory": null,
   "iconCount": 2,
   "iconBytes": 418309.0,
-  "appIconFile": "appx-icon.png",
+  "appIconFile": "app-icon.ico",
   "canonicalIconSourceName": "appx-icon.png",
   "canonicalIconBytes": 1,
   "canonicalIconSha256": "ba86465faaf353fc5d9b02ef0d63c480b58164f4781acadee6bc647ad3f5cdaf",
