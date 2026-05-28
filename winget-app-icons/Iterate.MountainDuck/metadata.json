@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "packageId": "Iterate.MountainDuck",
+  "resolvedPackageId": null,
+  "status": "HasIcon",
+  "hasIcon": true,
+  "firstSeenUtc": "2026-05-28T00:43:03.5463389Z",
+  "lastCheckedUtc": "2026-05-28T00:43:03.5463389Z",
+  "lastUpdatedUtc": "2026-05-28T00:43:03.5463389Z",
+  "wingetVersion": "v1.29.170-preview",
+  "packageVersion": null,
+  "manifestSha": null,
+  "installerType": null,
+  "alreadyInstalled": false,
+  "installedByThisRun": true,
+  "installSeconds": 137,
+  "extractSeconds": 0,
+  "uninstallSeconds": 3,
+  "durationSeconds": 143,
+  "installExitCode": 0,
+  "installTimedOut": false,
+  "uninstallExitCode": 0,
+  "uninstallTimedOut": false,
+  "failureCategory": null,
+  "installAttemptTag": "install-default",
+  "extractAttemptCount": 1,
+  "extractAttemptScopes": "Both",
+  "extractFailureCategory": null,
+  "iconCount": 2,
+  "iconBytes": 36657.0,
+  "appIconFile": "app-icon.ico",
+  "canonicalIconSourceName": "app-icon.ico",
+  "canonicalIconBytes": 1,
+  "canonicalIconSha256": "d2e6642c8f4f9f3a1ea72cd4bb113cae9b1405a9fefe3f6ab1f6c48b64530688",
+  "sourceReason": "AppxManifestLogo",
+  "extractError": null,
+  "installStdErr": null,
+  "installAttempts": {
+    "tag": "install-default",
+    "exitCode": 0,
+    "exitHex": "0x00000000",
+    "timedOut": false,
+    "errorName": null,
+    "failureCategory": null
+  },
+  "icons": [
+    {
+      "name": "appx-icon.png",
+      "bytes": 5240,
+      "sha256": "9b28e0154659b57efd97ffd033eeaa21aea8666798e7e4241e00426f8c10888e"
+    },
+    {
+      "name": "app-icon.ico",
+      "bytes": 31417,
+      "sha256": "d2e6642c8f4f9f3a1ea72cd4bb113cae9b1405a9fefe3f6ab1f6c48b64530688"
+    }
+  ],
+  "run": {
+    "startedAtUtc": "2026-05-28T00:43:03.5463389Z",
+    "runId": null,
+    "runAttempt": null,
+    "repository": null
+  }
+}
